@@ -15,7 +15,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, re_path
-from dashboard import views
+from synaiapp import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
