@@ -38,6 +38,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'synaiapp',
+    'django_seed',
+    'bootstrap4',
 ]
 
 MIDDLEWARE = [

@@ -1,10 +1,17 @@
 from django.shortcuts import render
 from django.views import generic, View
+from django.views.generic import ListView
 
+
+from .models import Song, AudioFeatures
 # Create your views here.
 
 def home(request):
     return render(request, 'home.html')
+
+class SongsListView(generic.ListView):
+    model = Song
+    template_name="songs_list.html"
 
 class FeedView(generic.TemplateView):
     template_name = "feed.html"
