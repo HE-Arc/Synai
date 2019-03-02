@@ -14,7 +14,8 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path, re_path
+from django.urls import path, re_path, include
+
 from synaiapp import views
 
 urlpatterns = [
@@ -24,4 +25,6 @@ urlpatterns = [
     path('feed', views.FeedView.as_view(), name='feed'),
     path('history', views.HistoryView.as_view(), name='history'),
     path('dashboard', views.DashboardView.as_view(), name='dashboard'),
+    # social auth app
+    path('social/', include('social_django.urls', namespace='social')),
 ]
