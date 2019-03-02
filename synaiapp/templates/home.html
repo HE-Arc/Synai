@@ -7,8 +7,13 @@
             <h1>Synai</h1>
         </div>
         <div class="row justify-content-center">
-            <button type="button" class="btn btn-success btn-lg">Get started</button>
-            <a href="{% url "social:begin" "spotify" %}">Spotify</a>
+            <p>Track your spotify consuption, analyze yours stats
+        </div>        
+        <div class="row justify-content-center">
+            <a class="btn btn-success btn-lg"href="{% url "social:begin" "spotify" %}">Log in with Spotify</a>
+        </div>
+        <div class="row justify-content-center">
+            <p>No Spotify yet ? <a href="https://www.spotify.com/">Click here !</a></p>
         </div>
     </div>
 {% endblock %}
