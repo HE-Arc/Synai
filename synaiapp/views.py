@@ -2,11 +2,17 @@ from django.shortcuts import render
 from django.views import generic, View
 from django.views.generic import ListView
 
+# User manipulation
+from django.contrib.auth.models import User
+from django.contrib.auth.decorators import login_required
+
+
 
 from .models import Song, AudioFeatures
-# Create your views here.
 
 def home(request):
+    if request.user.is_authenticated:
+        return render(request, 'dashboard.html')
     return render(request, 'home.html')
 
 class SongsListView(generic.ListView):

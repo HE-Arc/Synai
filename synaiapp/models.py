@@ -1,8 +1,5 @@
 from django.db import models
 
-# Create your models here.
-
-
 class AudioFeatures(models.Model):
     acousticness = models.FloatField()
     danceability = models.FloatField()
