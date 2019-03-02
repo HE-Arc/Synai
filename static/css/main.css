@@ -1,9 +1,12 @@
+@import url("https://fonts.googleapis.com/css?family=Capriola");
+/* General */
 h1 {
-    font-family: 'Capriola';
-    font-size: 10em;
+  font-family: "Capriola";
+  font-size: 10em;
 }
 
 .row {
-    margin: 10px;
+  margin: 10px;
 }
 
+/*# sourceMappingURL=main.css.map */
