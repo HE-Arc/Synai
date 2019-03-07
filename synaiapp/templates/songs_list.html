@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Songs list{% endblock %}
+{% block content %}
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-8">
+
+      <h1 class="display-4">The songs</h1>
+      <p class="lead text-muted">This is a display test page for deployment and early development.</p>
+      <hr/>
+
+      <table class="table table-bordered mt-5">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Name</th>
+            <th>Danceability</th>
+            <th>Spotify ID</th>
+          </tr>
+        </thead>
+
+        {% for song in object_list %}
+        <tr>
+            <td>
+                {{ song.pk }}
+            </td>
+            <td>
+                {{ song.song_name }}
+            </td>
+            <td>
+                {{ song.audio_features.danceability|floatformat:2 }}
+            </td>
+            <td>
+                {{ song.spotify_id}}
+            </td>
+        </tr>
+        {% endfor %}
+
+      </table>
+
+    </div>
+  </div>
+</div>
+
+
+{% endblock %}

@@ -14,10 +14,18 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path, re_path
-from dashboard import views
+from django.urls import path, re_path, include
+
+from synaiapp import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', views.home, name='home')
+    path('', views.home, name='home'),
+    path('songs-list', views.SongsListView.as_view(), name="songs-list"),
+    path('feed', views.FeedView.as_view(), name='feed'),
+    path('history', views.HistoryView.as_view(), name='history'),
+    path('dashboard', views.DashboardView.as_view(), name='dashboard'),
+    # social auth app
+    path('social/', include('social_django.urls', namespace='social')),
+    path('', include('django.contrib.auth.urls')),  # add logout route
 ]
