@@ -5,10 +5,11 @@ from django.views.generic import ListView
 # User manipulation
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
+from django.utils.decorators import method_decorator
 
 
 
-from .models import Song, AudioFeatures
+from .models import Song, AudioFeatures, Analysis
 
 def home(request):
     if request.user.is_authenticated:
@@ -30,10 +31,11 @@ class FeedView(generic.TemplateView):
 class HistoryView(generic.TemplateView):
     template_name = "history.html"
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        # add context data
-        return context
+    @method_decorator(login_required)
+    def get(self, request, *args, **kwargs):
+        context = {"analysis": Analysis.getUserHistory(self.request.user)}
+        return render(request, HistoryView.template_name, context)
+
 
 class DashboardView(generic.TemplateView):
     template_name = "dashboard.html"

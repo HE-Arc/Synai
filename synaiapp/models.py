@@ -47,15 +47,15 @@ class Analysis(models.Model):
         """
         Get the full analysis history of a user
         """
-        return Analysis.manager.filter(user.id).all()
+        return Analysis.manager.filter(user=user).all()
 
     @classmethod
     def getUserSummary(cls, user):
         """
         Get a summary of all the analysis done for a user
         """
-        Analysis.manager.filter(user.id).summarised_audio_features
-        pass
+        AudioFeaturesList = Analysis.getUserHistory(user)
+        return AudioFeatures.summarise(AudioFeaturesList)
     
     @classmethod
     def analyseSongsForUser(cls, listSong, user):
