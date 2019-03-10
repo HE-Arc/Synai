@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from functools import reduce
+from django.utils import timezone
 
 class AudioFeatures(models.Model):
     acousticness = models.FloatField()
@@ -35,12 +36,14 @@ class AudioFeatures(models.Model):
 class Song(models.Model):
     spotify_id = models.CharField(max_length=100)
     song_name = models.CharField(max_length=255)
+    artist_id = models.CharField(max_length=100, default=None, blank=True, null=True)
     audio_features = models.ForeignKey(AudioFeatures, null=True, on_delete=models.SET_NULL)
 
 class Analysis(models.Model):
     songs = models.ManyToManyField(Song)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     summarised_audio_features = models.ForeignKey(AudioFeatures, on_delete=models.CASCADE)
+    created = models.DateTimeField(default=timezone.now)
 
     manager = models.Manager()
 
@@ -49,18 +52,20 @@ class Analysis(models.Model):
         """
         Get the full analysis history of a user
         """
-        # return Analysis.manager.filter(user=user).all()
+        analysis = Analysis.manager.filter(user=user).all()
+        songs = [ana.songs for ana in analysis]
+        # audioFeatures = [ ana.summarised_audio_features for ana in analysis]
         audioFeatures = AudioFeatures.manager.all()
-        return audioFeatures
+        return analysis, songs, audioFeatures
 
     @classmethod
     def getUserSummary(cls, user):
         """
         Get a summary of all the analysis done for a user
         """
-        AudioFeaturesList = Analysis.getUserHistory(user)
+        analysis, songs, audioFeatures = Analysis.getUserHistory(user)
         try:
-            return AudioFeatures.summarise(AudioFeaturesList)
+            return AudioFeatures.summarise(audioFeatures)
         except:
             return None
     
@@ -69,4 +74,5 @@ class Analysis(models.Model):
         """
         Analyse a list of songs for a user and return the summary
         """
+        # Doit être dans feedView !
         pass

@@ -34,9 +34,13 @@ class HistoryView(generic.TemplateView):
     @method_decorator(login_required)
     def get(self, request, *args, **kwargs):
         context = super().get_context_data()
-        analysis = Analysis.getUserHistory(self.request.user)
+        analysis, songs, audioFeatures = Analysis.getUserHistory(self.request.user)
         context["analysis"] = analysis
         context["analysis_len"] = len(analysis)
+        context["range"] = range(len(audioFeatures)) #range(len(analysis))
+        context["songs"] = songs
+        context["songs_len"] = len(songs)
+        context["audio_features"] = audioFeatures
         return render(request, HistoryView.template_name, context)
 
 

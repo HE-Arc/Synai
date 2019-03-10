@@ -1,0 +1,32 @@
+[
+    {
+        "model":"synaiapp.Song",
+        "pk":1,
+        "fields": {
+            "spotify_id":"3iaTTTIDDeh1vEdpLApbty",
+            "song_name":"Martyr",
+            "artist_id":"48vDIufGC8ujPuBiTxY8dm",
+            "audio_features":1
+        }
+    },
+    {
+        "model":"synaiapp.Song",
+        "pk":2,
+        "fields": {
+            "spotify_id":"3Yp9EQ8G9S2AlSew3R7p6I",
+            "song_name":"Heaven Up There",
+            "artist_id":"48vDIufGC8ujPuBiTxY8dm",
+            "audio_features":2
+        }
+    },
+    {
+        "model":"synaiapp.Song",
+        "pk":3,
+        "fields": {
+            "spotify_id":"4IUKqnSIQIgtdaqEfUFJZf",
+            "song_name":"Live Well",
+            "artist_id":"48vDIufGC8ujPuBiTxY8dm",
+            "audio_features":3
+        }
+    }
+]

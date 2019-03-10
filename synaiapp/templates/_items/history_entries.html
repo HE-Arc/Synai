@@ -1,0 +1,25 @@
+{% load bootstrap4 %}
+{% bootstrap_css %}
+
+{% for analys in analysis %}
+<div class="row justify-content-center">
+    <div id="entry" class="card">
+        <div class="card-header">
+            {{ analys.created }}
+        </div>
+        <div class="card-body">
+            <p class="card-title">You analyzed {{ analysis_len }} songs</p>
+            <ul class="card-text">
+                <li>Acousticness: {{analys.summarised_audio_features.acousticness}}</li>
+                <li>Danceability: {{audio_features.i.danceability}}</li>
+                <li>Energy: {{audio_features.i.energy}}</li>
+                <li>Instrumentalness: {{audio_features.i.instrumentalness}}</li>
+                <li>Liveness: {{audio_features.i.liveness}}</li>
+                <li>Valence: {{audio_features.i.valence}}</li>
+                <li>Speechiness: {{audio_features.i.speechiness}}</li>
+                <li>Tempo: {{audio_features.i.tempo}}</li>
+            </ul>
+        </div>
+    </div>
+</div>
+{% endfor %}
