@@ -27,7 +27,8 @@ DEBUG = True
 
 ALLOWED_HOSTS = [
     'synai.srvz-webapp.he-arc.ch',
-    'localhost']
+    'localhost',
+    ]
 
 
 # Application definition
