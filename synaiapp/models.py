@@ -43,6 +43,7 @@ class Analysis(models.Model):
     songs = models.ManyToManyField(Song)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     summarised_audio_features = models.ForeignKey(AudioFeatures, on_delete=models.CASCADE)
+    songs_len = models.IntegerField()
     created = models.DateTimeField(default=timezone.now)
 
     manager = models.Manager()

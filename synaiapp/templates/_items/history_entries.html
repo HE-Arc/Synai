@@ -8,16 +8,16 @@
             {{ analys.created }}
         </div>
         <div class="card-body">
-            <p class="card-title">You analyzed {{ analysis_len }} songs</p>
+            <p class="card-title">You analyzed {{ analys.songs_len }} songs</p>
             <ul class="card-text">
                 <li>Acousticness: {{analys.summarised_audio_features.acousticness}}</li>
-                <li>Danceability: {{audio_features.i.danceability}}</li>
-                <li>Energy: {{audio_features.i.energy}}</li>
-                <li>Instrumentalness: {{audio_features.i.instrumentalness}}</li>
-                <li>Liveness: {{audio_features.i.liveness}}</li>
-                <li>Valence: {{audio_features.i.valence}}</li>
-                <li>Speechiness: {{audio_features.i.speechiness}}</li>
-                <li>Tempo: {{audio_features.i.tempo}}</li>
+                <li>Danceability: {{analys.summarised_audio_features.danceability}}</li>
+                <li>Energy: {{analys.summarised_audio_features.energy}}</li>
+                <li>Instrumentalness: {{analys.summarised_audio_features.instrumentalness}}</li>
+                <li>Liveness: {{analys.summarised_audio_features.liveness}}</li>
+                <li>Valence: {{analys.summarised_audio_features.valence}}</li>
+                <li>Speechiness: {{analys.summarised_audio_features.speechiness}}</li>
+                <li>Tempo: {{analys.summarised_audio_features.tempo}}</li>
             </ul>
         </div>
     </div>
