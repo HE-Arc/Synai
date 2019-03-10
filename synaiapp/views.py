@@ -40,7 +40,11 @@ class HistoryView(generic.TemplateView):
 class DashboardView(generic.TemplateView):
     template_name = "dashboard.html"
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        # add context data
-        return context
+    @method_decorator(login_required)
+    def get(self, request, *args, **kwargs):
+        context = {
+            "username": "username spotify",
+            "summary" : Analysis.getUserSummary(self.request.user)
+            }
+
+        return render(request, DashboardView.template_name, context)

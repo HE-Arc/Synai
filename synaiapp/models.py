@@ -55,7 +55,10 @@ class Analysis(models.Model):
         Get a summary of all the analysis done for a user
         """
         AudioFeaturesList = Analysis.getUserHistory(user)
-        return AudioFeatures.summarise(AudioFeaturesList)
+        try:
+            return AudioFeatures.summarise(AudioFeaturesList)
+        except:
+            return None
     
     @classmethod
     def analyseSongsForUser(cls, listSong, user):
