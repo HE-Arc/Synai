@@ -49,5 +49,4 @@ class DashboardView(generic.TemplateView):
             "username": "username spotify",
             "summary" : Analysis.getUserSummary(self.request.user)
             }
-
         return render(request, DashboardView.template_name, context)

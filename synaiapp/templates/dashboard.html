@@ -7,10 +7,28 @@
             <h1>Dashboard</h1>
         </div>
         <div class="row justify-content-center">
-            <p>this page will present you the gloabl means of stats from your previous analysis</p>
+            <p>Hello {{ user.first_name }}</p>
         </div>
         <div class="row justify-content-center">
-            <p>Hello {{ username }}</p>
+            <p>Here's the summary of all the analysis you permformed</p>
         </div>
+        {% if summary == None %}
+        <div class="row justify-content-center">
+            <p>Oh, it's seem you never used our song analyzer !</p>
+        </div>
+        {% else %}
+        <div class="row justify-content-center">
+            <ul>
+                <li>Acousticness: {{summary.acousticness}}</li>
+                <li>Danceability: {{summary.danceability}}</li>
+                <li>Energy: {{summary.energy}}</li>
+                <li>Instrumentalness: {{summary.instrumentalness}}</li>
+                <li>Liveness: {{summary.liveness}}</li>
+                <li>Valence: {{summary.valence}}</li>
+                <li>Speechiness: {{summary.speechiness}}</li>
+                <li>Tempo: {{summary.tempo}}</li>
+            </ul>
+        </div>
+        {% endif %}
     </div>
 {% endblock %}
