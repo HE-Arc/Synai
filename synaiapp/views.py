@@ -33,7 +33,10 @@ class HistoryView(generic.TemplateView):
 
     @method_decorator(login_required)
     def get(self, request, *args, **kwargs):
-        context = {"analysis": Analysis.getUserHistory(self.request.user)}
+        context = super().get_context_data()
+        analysis = Analysis.getUserHistory(self.request.user)
+        context["analysis"] = analysis
+        context["analysis_len"] = len(analysis)
         return render(request, HistoryView.template_name, context)
 
 

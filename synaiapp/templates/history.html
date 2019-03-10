@@ -7,7 +7,36 @@
             <h1>History</h1>
         </div>
         <div class="row justify-content-center">
-            <p>this page will presents you all your previous analysis</p>
+            <p>You performed {{ analysis_len }} analysis.</p>
+        </div>
+        <div class="row justify-content-center">
+            <p>Here all the result</p>
+            <table  class="table table-bordered mt-5">
+                <tr>
+                    <th>#</th>
+                    <th>Acousticness</th>
+                    <th>Danceability</th>
+                    <th>Energy</th>
+                    <th>Instrumentalness</th>
+                    <th>Liveness</th>
+                    <th>Valence</th>
+                    <th>Speechiness</th>
+                    <th>Tempo</th>
+                </tr>
+                {% for analys in analysis %}
+                <tr>
+                    <td>{{analys.pk}}</td>
+                    <td>{{analys.acousticness}}</td>
+                    <td>{{analys.danceability}}</td>
+                    <td>{{analys.energy}}</td>
+                    <td>{{analys.instrumentalness}}</td>
+                    <td>{{analys.liveness}}</td>
+                    <td>{{analys.valence}}</td>
+                    <td>{{analys.speechiness}}</td>
+                    <td>{{analys.tempo}}</td>
+                </tr>
+                {% endfor %}
+            </table>
         </div>
     </div>
 {% endblock %}

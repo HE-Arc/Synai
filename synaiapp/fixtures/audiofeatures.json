@@ -11,7 +11,9 @@
             "valence":0.2,
             "speechiness":0.2,
             "tempo":0.2
-        },
+        }
+    },
+    {
         "model":"synaiapp.AudioFeatures",
         "pk":2,
         "fields": {
@@ -23,7 +25,9 @@
             "valence":0.3,
             "speechiness":0.3,
             "tempo":0.3
-        },
+        }
+    },
+    {
         "model":"synaiapp.AudioFeatures",
         "pk":3,
         "fields": {

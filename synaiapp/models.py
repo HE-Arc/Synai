@@ -12,6 +12,8 @@ class AudioFeatures(models.Model):
     speechiness = models.FloatField()
     tempo = models.FloatField()
 
+    manager = models.Manager()
+
     @classmethod
     def summarise(cls, AudioFeatureList):
         summary = AudioFeatures()
@@ -47,7 +49,9 @@ class Analysis(models.Model):
         """
         Get the full analysis history of a user
         """
-        return Analysis.manager.filter(user=user).all()
+        # return Analysis.manager.filter(user=user).all()
+        audioFeatures = AudioFeatures.manager.all()
+        return audioFeatures
 
     @classmethod
     def getUserSummary(cls, user):
