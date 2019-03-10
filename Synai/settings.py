@@ -25,7 +25,9 @@ SECRET_KEY = '(^*8t9(4w0a^d&ummb@^lek2w$gt*1-zsoz%m^-228ii-&jtd7'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['synai.srvz-webapp.he-arc.ch']
+ALLOWED_HOSTS = [
+    'synai.srvz-webapp.he-arc.ch',
+    'localhost']
 
 
 # Application definition
