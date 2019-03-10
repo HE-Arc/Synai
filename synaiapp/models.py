@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from functools import reduce
 
 class AudioFeatures(models.Model):
     acousticness = models.FloatField()
@@ -11,6 +12,24 @@ class AudioFeatures(models.Model):
     speechiness = models.FloatField()
     tempo = models.FloatField()
 
+    @classmethod
+    def summarise(cls, AudioFeatureList):
+        summary = AudioFeatures()
+        summary.acousticness = AudioFeatures.mean("acousticness", AudioFeatureList)
+        summary.danceability = AudioFeatures.mean("danceability", AudioFeatureList)
+        summary.energy = AudioFeatures.mean("energy", AudioFeatureList)
+        summary.instrumentalness = AudioFeatures.mean("instrumentalness", AudioFeatureList)
+        summary.liveness = AudioFeatures.mean("liveness", AudioFeatureList)
+        summary.valence = AudioFeatures.mean("valence", AudioFeatureList)
+        summary.speechiness = AudioFeatures.mean("speechiness", AudioFeatureList)
+        summary.tempo = AudioFeatures.mean("tempo", AudioFeatureList)
+        return summary
+    
+    @classmethod
+    def mean(cls, attribute, AudioFeaturelist):
+        return reduce(lambda a, b: a+b, [getattr(x, attribute, 0) for x in AudioFeaturelist]) /len(AudioFeaturelist)
+
+
 class Song(models.Model):
     spotify_id = models.CharField(max_length=100)
     song_name = models.CharField(max_length=255)
@@ -21,18 +40,21 @@ class Analysis(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     summarised_audio_features = models.ForeignKey(AudioFeatures, on_delete=models.CASCADE)
 
+    manager = models.Manager()
+
     @classmethod
     def getUserHistory(cls, user):
         """
         Get the full analysis history of a user
         """
-        pass
+        return Analysis.manager.filter(user.id).all()
 
     @classmethod
     def getUserSummary(cls, user):
         """
         Get a summary of all the analysis done for a user
         """
+        Analysis.manager.filter(user.id).summarised_audio_features
         pass
     
     @classmethod
