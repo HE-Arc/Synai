@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
-{% load static %}
+
 {% block title %}Songs list{% endblock %}
+
 {% block content %}
 
 <div class="container">
@@ -33,7 +34,7 @@
                 {{ song.audio_features.danceability|floatformat:2 }}
             </td>
             <td>
-                {{ song.spotify_id}}
+                {{ song.spotify_id }}
             </td>
         </tr>
         {% endfor %}

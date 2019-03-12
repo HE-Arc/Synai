@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from functools import reduce
 from django.utils import timezone
+import requests
 
 class AudioFeatures(models.Model):
     acousticness = models.FloatField()
@@ -38,6 +39,18 @@ class Song(models.Model):
     song_name = models.CharField(max_length=255)
     artist_id = models.CharField(max_length=100, default=None, blank=True, null=True)
     audio_features = models.ForeignKey(AudioFeatures, null=True, on_delete=models.SET_NULL)
+
+    @classmethod
+    def getSong(self, song_req_id, auth):
+        song = Song.objects.filter(spotify_id=song_req_id)
+        if(not(song.exists())):
+            print("Song not found going to the API...")
+            response = requests.get("https://api.spotify.com/v1/tracks/" + song_req_id, params={'access_token' : auth['access_token']})
+            print("status : ", response.status_code)
+            print(response.text)
+
+           
+        return song
 
 class Analysis(models.Model):
     songs = models.ManyToManyField(Song)

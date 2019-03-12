@@ -16,6 +16,20 @@ def home(request):
         return render(request, 'dashboard.html')
     return render(request, 'home.html')
 
+class SingleSongView(generic.TemplateView):
+    model = Song
+  
+    template_name = "single_song_view.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        social = self.request.user.social_auth.get(provider="spotify")
+        access_token = social.extra_data
+        print(access_token)
+        songVals = Song.getSong('11dFghVXANMlKmJXsNCbNl', access_token)
+        return context
+            
+
 class SongsListView(generic.ListView):
     model = Song
     template_name="songs_list.html"
