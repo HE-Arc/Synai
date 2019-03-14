@@ -16,6 +16,8 @@ import os
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
+
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.1/howto/deployment/checklist/
 
@@ -137,6 +139,7 @@ SOCIAL_AUTH_URL_NAMESPACE = 'social'
 
 # Spotify
 
+SPOTIFY_BASE_URL = "https://api.spotify.com/v1/"
 SOCIAL_AUTH_SPOTIFY_KEY = os.environ.get('SPOTIFY_KEY', '')
 SOCIAL_AUTH_SPOTIFY_SECRET = os.environ.get('SPOTIFY_SECRET', '')
 SOCIAL_AUTH_SPOTIFY_SCOPE = ['user-read-email', 'user-library-read']

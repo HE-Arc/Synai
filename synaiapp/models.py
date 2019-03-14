@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from functools import reduce
 from django.utils import timezone
+import json
 import requests
 
 class AudioFeatures(models.Model):
@@ -28,28 +29,65 @@ class AudioFeatures(models.Model):
         summary.speechiness = AudioFeatures.mean("speechiness", AudioFeatureList)
         summary.tempo = AudioFeatures.mean("tempo", AudioFeatureList)
         return summary
+
     
     @classmethod
     def mean(cls, attribute, AudioFeaturelist):
         return reduce(lambda a, b: a+b, [getattr(x, attribute, 0) for x in AudioFeaturelist]) /len(AudioFeaturelist)
+    
+    @classmethod
+    def create(cls, audio_features):
+        j_vals = json.loads(audio_features)
+
+        af = cls()
+        af.acousticness = j_vals['acousticness']
+        af.danceability = j_vals['danceability']
+        af.energy = j_vals['energy']
+        af.instrumentalness = j_vals['instrumentalness']
+        af.liveness = j_vals['liveness']
+        af.valence = j_vals['valence']
+        af.speechiness = j_vals['speechiness']
+        af.tempo = j_vals['tempo']
+
+        print(type(j_vals))
+        return af
+
+class Artist(models.Model):
+    spotify_id = models.CharField(max_length=100)
+    artist_name = models.CharField(max_length=255)
+
+    @classmethod
+    def get_artist(cls, artist_id):
+        artist = Artist.objects.filter(spotify_id=artist_id)
+        if(not(artist.exists())):
+            pass
+        return artist
+    
+    @classmethod
+    def create(cls, spotify_id, artist_name):
+        artist = cls(spotify_id=spotify_id, artist_name=artist_name)
+        return artist
 
 
 class Song(models.Model):
     spotify_id = models.CharField(max_length=100)
     song_name = models.CharField(max_length=255)
-    artist_id = models.CharField(max_length=100, default=None, blank=True, null=True)
+    artists = models.ManyToManyField(Artist)
     audio_features = models.ForeignKey(AudioFeatures, null=True, on_delete=models.SET_NULL)
 
     @classmethod
-    def getSong(self, song_req_id, auth):
+    def get_song(cls, song_req_id, auth):
         song = Song.objects.filter(spotify_id=song_req_id)
         if(not(song.exists())):
             print("Song not found going to the API...")
-            response = requests.get("https://api.spotify.com/v1/tracks/" + song_req_id, params={'access_token' : auth['access_token']})
+            response = requests.get("" + song_req_id, params={'access_token' : auth['access_token']})
             print("status : ", response.status_code)
             print(response.text)
+        return song
 
-           
+    @classmethod
+    def create(cls, song_id, song_name, audio_features):
+        song = cls(spotify_id = song_id, song_name=song_name, audio_features=audio_features)
         return song
 
 class Analysis(models.Model):

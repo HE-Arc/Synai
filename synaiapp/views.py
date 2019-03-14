@@ -6,8 +6,7 @@ from django.views.generic import ListView
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
-
-
+from .services import SpotifyRequestManager
 
 from .models import Song, AudioFeatures, Analysis
 
@@ -24,9 +23,14 @@ class SingleSongView(generic.TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         social = self.request.user.social_auth.get(provider="spotify")
-        access_token = social.extra_data
-        print(access_token)
-        songVals = Song.getSong('11dFghVXANMlKmJXsNCbNl', access_token)
+        access_token = social.extra_data['access_token']
+        #print(access_token)
+        manager  = SpotifyRequestManager(access_token)
+        status_code, data = manager.get_analysis('11dFghVXANMlKmJXsNCbNl')
+
+        audio_features = AudioFeatures.create(data)
+        #songVals = Song.get_song('11dFghVXANMlKmJXsNCbNl', access_token)
+        
         return context
             
 
