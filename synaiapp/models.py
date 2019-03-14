@@ -71,9 +71,11 @@ class Analysis(models.Model):
             return None
     
     @classmethod
-    def analyseSongsForUser(cls, listSong, user):
+    def analyseSongsForUser(cls, listSong):
         """
         Analyse a list of songs for a user and return the summary
         """
         # Doit être dans feedView !
-        pass
+        audio_features = [song.audio_features for song in listSong]
+        return AudioFeatures.summarise(audio_features)
+    

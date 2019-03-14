@@ -7,7 +7,51 @@
             <h1>Feed</h1>
         </div>
         <div class="row justify-content-center">
-            <p>this page will ask you to chose one of this following object and then will show you stats about it</p>
+            <p>this page will ask you to chose one of this following object and then will show you stats about it </p>
         </div>
+        <div class="row justify-content-center">
+            <div id="graph" class="col-lg-8" style="height: 400px;"></div>
+        </div>
+
     </div>
+{% endblock %}
+{% block javascript %}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/4.1.0/echarts-en.common.min.js" integrity="sha256-PXZ+rlU8rLmI+s7pWJJQjdzV4Y7dZ41gs6rAXpfZhjQ=" crossorigin="anonymous"></script>
+    <script type="text/javascript">
+    var myChart = echarts.init(document.getElementById('graph'));
+    option = {
+        title: {
+            text: 'ECharts 入门示例'
+        },
+        tooltip: {
+            'showContent': true,
+            'backgroundColor': 'rgba(245, 245, 245, 0.8)',
+            'borderWidth': 1,
+            'borderColor': '#ccc',
+            'padding': 10,
+            'textStyle': {
+                color: '#000'
+            },
+        },
+        legend: {
+            data:['Audio Features']
+        },
+        xAxis: {
+            data: {{ stats_headers|safe }}
+        },
+        yAxis: {},
+        series: [{
+            name: 'Audio Features',
+            type: 'bar',
+            data: {{ stats }}
+        }]
+    };
+    myChart.setOption(option);
+
+    window.onresize = function()
+    {
+        myChart.resize();
+    }
+    </script>
+
 {% endblock %}

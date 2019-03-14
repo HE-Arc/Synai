@@ -13,8 +13,8 @@ from .models import Song, AudioFeatures, Analysis
 
 def home(request):
     if request.user.is_authenticated:
-        return render(request, 'dashboard.html')
-    return render(request, 'home.html')
+        return render(request, "dashboard.html")
+    return render(request, "home.html")
 
 class SongsListView(generic.ListView):
     model = Song
@@ -23,10 +23,33 @@ class SongsListView(generic.ListView):
 class FeedView(generic.TemplateView):
     template_name = "feed.html"
 
-    def get_context_data(self, **kwargs):
+    @method_decorator(login_required)
+    def get(self, request, *args, **kwargs):
         context = super().get_context_data(**kwargs)
         # add context data
-        return context
+        audio_features = Analysis.analyseSongsForUser(Song.objects.all())
+        context["audio_features"] = audio_features
+        context["stats"] = [
+            audio_features.acousticness,
+            audio_features.danceability,
+            audio_features.energy,
+            audio_features.instrumentalness,
+            audio_features.liveness,
+            audio_features.valence,
+            audio_features.speechiness,
+            audio_features.tempo/100
+        ]
+        context["stats_headers"] = [
+            "Acousticness",
+            "Danceability",
+            "Energy",
+            "Instrumentalness",
+            "Liveness",
+            "Valence",
+            "Speechiness",
+            "Tempo"
+        ]
+        return render(request, FeedView.template_name, context)
 
 class HistoryView(generic.TemplateView):
     template_name = "history.html"
