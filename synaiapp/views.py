@@ -15,22 +15,29 @@ def home(request):
         return render(request, 'dashboard.html')
     return render(request, 'home.html')
 
+def request_manager_factory(request):
+    social = request.user.social_auth.get(provider="spotify")
+    access_token = social.extra_data['access_token']
+    manager  = SpotifyRequestManager(access_token)
+    return manager
+
 class SingleSongView(generic.TemplateView):
     model = Song
   
-    template_name = "single_song_view.html"
+    template_name = "song_detail.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        social = self.request.user.social_auth.get(provider="spotify")
-        access_token = social.extra_data['access_token']
-        #print(access_token)
-        manager  = SpotifyRequestManager(access_token)
-        status_code, data = manager.get_analysis('11dFghVXANMlKmJXsNCbNl')
 
-        audio_features = AudioFeatures.create(data)
-        #songVals = Song.get_song('11dFghVXANMlKmJXsNCbNl', access_token)
-        
+        song_id = self.kwargs['id']
+        song = Song.get_song(song_id)
+        if(song == None):
+            print("Song does not exists... Going to the API")
+            manager = request_manager_factory(self.request)
+            song = manager.get_song(song_id)
+
+        context['song'] = song
+        context['artists'] = song.artists.all()
         return context
             
 

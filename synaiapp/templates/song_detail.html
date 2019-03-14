@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+
+{% block title %}Song | {{ song.song_name }}{% endblock %}
+
+{% block content %}
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-8">
+
+      <h1 class="display-4">{{ song.song_name }}</h1>
+      <h2 class="display-5 font-weight-light">{{ song.spotify_id }}</h2>
+      <h3 class="display-3">Artists</h3>  
+      {% for artist in artists %}
+          <p class="display-4">{{ artist.artist_name }}</p>
+      {% endfor %}
+      <div class="card text-white bg-danger mr-3 mb-3" style="max-width: 18rem;">
+        <div class="card-body">
+          <h5 class="card-title">Danceability</h5>
+          <p class="display-2">{{ song.audio_features.danceability|floatformat:2 }}</p>
+        </div>
+      </div>
+      <div class="card text-white bg-primary mr-3 mb-3" style="max-width: 18rem;">
+        <div class="card-body">
+          <h5 class="card-title">Valence</h5>
+          <p class="display-2">{{ song.audio_features.valence|floatformat:2}}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+{% endblock %}
