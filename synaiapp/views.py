@@ -16,19 +16,21 @@ def home(request):
     return render(request, 'home.html')
 
 def request_manager_factory(request):
+    """ 
+    This method is a helper ""factory"" to build SpotifyRequestManager object
+    The user's auth are extracted from the request
+    Returns the SpotifyRequestManager object built
+    """ 
     social = request.user.social_auth.get(provider="spotify")
-    access_token = social.extra_data['access_token']
-    manager  = SpotifyRequestManager(access_token)
+    manager  = SpotifyRequestManager(social)
     return manager
 
 class SingleSongView(generic.TemplateView):
     model = Song
-  
     template_name = "song_detail.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-
         song_id = self.kwargs['id']
         song = Song.get_song(song_id)
         if(song == None):
