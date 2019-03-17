@@ -18,7 +18,7 @@
             <th>#</th>
             <th>Name</th>
             <th>Danceability</th>
-            <th>Spotify ID</th>
+            <th>Actions</th>
           </tr>
         </thead>
 
@@ -34,7 +34,7 @@
                 {{ song.audio_features.danceability|floatformat:2 }}
             </td>
             <td>
-                {{ song.spotify_id }}
+              <a href="{% url 'song-detail' song.spotify_id %}" class="btn btn-primary btn-sm">Details</a>
             </td>
         </tr>
         {% endfor %}
