@@ -1,5 +1,6 @@
 {% load bootstrap4 %}
 {% bootstrap_css %}
+{% load static %}
 
 {% for analys in analysis %}
 <div class="row justify-content-center">
@@ -19,7 +20,35 @@
                 <li>Speechiness: {{analys.summarised_audio_features.speechiness}}</li>
                 <li>Tempo: {{analys.summarised_audio_features.tempo}}</li>
             </ul>
+
+            <div id="graph{{ analys.id }}" style="height: 350px; width: 500px;"></div>
         </div>
     </div>
 </div>
 {% endfor %}
+
+{% block javascript %}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/4.1.0/echarts-en.js" integrity="sha256-q4eNahhjrmTWF+LAesQ+rDagZhwcegBpS7qE0UAjJx4=" crossorigin="anonymous"></script>    <script src="{% static '/js/graph.js' %}"></script>
+    <script type="text/javascript">
+
+    let charts = [];
+    {% for analys in analysis %}
+    charts.push(new BarChart('graph{{ analys.id }}', {{ analysis_headers|safe }}, [
+        {{ analys.summarised_audio_features.acousticness }},
+        {{ analys.summarised_audio_features.danceability }},
+        {{ analys.summarised_audio_features.energy }},
+        {{ analys.summarised_audio_features.instrumentalness }},
+        {{ analys.summarised_audio_features.liveness }},
+        {{ analys.summarised_audio_features.valence }},
+        {{ analys.summarised_audio_features.speechiness }},
+        ], 'BarChart'));
+    {% endfor %}
+
+    window.onresize = function()
+    {
+        charts.forEach(function (element) {
+            element.chart.resize();
+        });
+    };
+    </script>
+{% endblock %}

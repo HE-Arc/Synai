@@ -48,6 +48,18 @@ class AudioFeatures(models.Model):
 
         return af
 
+    def asArray(self):
+        return [
+            self.acousticness,
+            self.danceability,
+            self.energy,
+            self.instrumentalness,
+            self.liveness,
+            self.valence,
+            self.speechiness,
+            self.tempo/100,
+        ]
+
 class Artist(models.Model):
     spotify_id = models.CharField(max_length=100)
     artist_name = models.CharField(max_length=255)

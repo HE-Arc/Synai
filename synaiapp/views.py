@@ -56,16 +56,7 @@ class FeedView(generic.TemplateView):
         # add context data
         audio_features = Analysis.analyseSongsForUser(Song.objects.all())
         context["audio_features"] = audio_features
-        context["stats"] = [
-            audio_features.acousticness,
-            audio_features.danceability,
-            audio_features.energy,
-            audio_features.instrumentalness,
-            audio_features.liveness,
-            audio_features.valence,
-            audio_features.speechiness,
-            audio_features.tempo/100
-        ]
+        context["stats"] = audio_features.asArray()
         context["stats_headers"] = [
             "Acousticness",
             "Danceability",
@@ -93,9 +84,22 @@ class HistoryView(generic.TemplateView):
             analysis, songs, audioFeatures = Analysis.getUserHistory(self.request.user, order=-1)
 
         context["analysis"] = analysis
+        context["analysis_headers"] = [
+            "Acousticness",
+            "Danceability",
+            "Energy",
+            "Instrumentalness",
+            "Liveness",
+            "Valence",
+            "Speechiness",
+        ]
         context["analysis_len"] = len(analysis)
         context["songs"] = songs
         context["all_songs_len"] = len(songs)
+
+        # for graphs use
+        context["analysis_summary_array"] = dict(zip([a.id for a in analysis], # keys are indices
+            [a.summarised_audio_features.asArray() for a in analysis])) # values are table
         return render(request, HistoryView.template_name, context)
 
 
