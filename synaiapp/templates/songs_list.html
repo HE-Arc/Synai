@@ -19,6 +19,7 @@
             <th>Name</th>
             <th>Danceability</th>
             <th>Actions</th>
+            <th>Player</th>
           </tr>
         </thead>
 
@@ -35,6 +36,9 @@
             </td>
             <td>
               <a href="{% url 'song-detail' song.spotify_id %}" class="btn btn-primary btn-sm">Details</a>
+            </td>
+            <td>
+                <iframe src="https://open.spotify.com/embed/track/{{ song.spotify_id }}" width="300" height="80" frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>
             </td>
         </tr>
         {% endfor %}
