@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
-{% block title %}History{% endblock %}
+{% block title %}Feed{% endblock %}
 {% block content %}
     <div class="container-fluid">
         <div class="row justify-content-center">
@@ -17,7 +17,7 @@
             <div id="graph3" class="col-lg-4" style="height: 400px;"></div>
         </div>
         <div class="row justify-content-center">
-            {% include  '_items/recommandations.html' %}
+            {% include  "_items/recommandations.html" %}
         </div>
     </div>
 {% endblock %}

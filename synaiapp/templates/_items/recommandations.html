@@ -1,14 +1,16 @@
 {% load bootstrap4 %}
 {% bootstrap_css %}
 
-<div id="entry" class="card">
-    <div class="card-header">
-        We recommand you to check this songs ! Sure you'll them
-    </div>
+<div id="entry" class="jumbotron">
+    <h1 class="display-4">
+        Recommandations
+    </h1>
+    <p class="lead">Check out these songes ! We're sure you'll like them ;)</p>
+    <hr class="my-4">
     <ul class="list-group list-group-flush text-center">
         {% for r_song in recommandations %}
         <li class="list-group-item">
-                <iframe src="https://open.spotify.com/embed/track/{{ r_song.spotify_id }}" width="300" height="80" frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>
+            <iframe src="https://open.spotify.com/embed/track/{{ r_song.spotify_id }}" width="300" height="80" frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>
         </li>
         {% endfor %}
     </ul>  
