@@ -1,0 +1,15 @@
+{% load bootstrap4 %}
+{% bootstrap_css %}
+
+<div id="entry" class="card">
+    <div class="card-header">
+        We recommand you to check this songs ! Sure you'll them
+    </div>
+    <ul class="list-group list-group-flush text-center">
+        {% for r_song in recommandations %}
+        <li class="list-group-item">
+                <iframe src="https://open.spotify.com/embed/track/{{ r_song.spotify_id }}" width="300" height="80" frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>
+        </li>
+        {% endfor %}
+    </ul>  
+</div>

@@ -76,6 +76,8 @@ class FeedView(generic.TemplateView):
             "Speechiness",
             "Tempo"
         ]
+        # Get correct recommandations
+        context["recommandations"] = Song.objects.all()
         return render(request, FeedView.template_name, context)
 
 class HistoryView(generic.TemplateView):
