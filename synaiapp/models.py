@@ -88,11 +88,14 @@ class Analysis(models.Model):
     manager = models.Manager()
 
     @classmethod
-    def getUserHistory(cls, user):
+    def getUserHistory(cls, user, order=1):
         """
         Get the full analysis history of a user
         """
-        analysis = Analysis.manager.filter(user=user).all()
+        if order < 1:
+            analysis = Analysis.manager.filter(user=user).order_by('-created')
+        else:
+            analysis = Analysis.manager.filter(user=user).all()
         songs = [ana.songs for ana in analysis]
         # audioFeatures = [ ana.summarised_audio_features for ana in analysis]
         audioFeatures = AudioFeatures.manager.all()
