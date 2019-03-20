@@ -7,7 +7,32 @@
             <h1>Feed</h1>
         </div>
         <div class="row justify-content-center">
-            <p>this page will ask you to chose one of this following object and then will show you stats about it</p>
+            <p>this page will ask you to chose one of this following object and then will show you stats about it </p>
+        </div>
+        <div class="row justify-content-center">
+            <div id="graph" class="col-lg-8" style="height: 350px;"></div>
+        </div>
+        <div class="row justify-content-center">
+            <div id="graph2" class="col-lg-4" style="height: 400px;"></div>
+            <div id="graph3" class="col-lg-4" style="height: 400px;"></div>
         </div>
     </div>
+{% endblock %}
+{% block javascript %}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/4.1.0/echarts-en.js" integrity="sha256-q4eNahhjrmTWF+LAesQ+rDagZhwcegBpS7qE0UAjJx4=" crossorigin="anonymous"></script>    <script src="{% static '/js/graph.js' %}"></script>
+    <script type="text/javascript">
+
+    let charts = [];
+    charts.push(new BarChart('graph', {{ stats_headers|safe }}, {{ stats }}, 'BarChart'));
+    charts.push(new PieChart('graph2', {{ stats_headers|safe }}, {{ stats }}, 'PieChart'));
+    charts.push(new RadarChart('graph3', {{ stats_headers|safe }}, {{ stats }}, 'RadarChart'));
+
+    window.onresize = function()
+    {
+        charts.forEach(function (element) {
+            element.chart.resize();
+        });
+    };
+    </script>
+
 {% endblock %}
