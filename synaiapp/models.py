@@ -49,7 +49,7 @@ class AudioFeatures(models.Model):
         return af
 
 class Artist(models.Model):
-    spotify_id = models.CharField(max_length=100)
+    spotify_id = models.CharField(max_length=100, primary_key=True)
     artist_name = models.CharField(max_length=255)
 
     @classmethod
@@ -62,11 +62,28 @@ class Artist(models.Model):
         artist = cls(spotify_id=spotify_id, artist_name=artist_name)
         return artist
 
+class Album(models.Model):
+    spotify_id = models.CharField(max_length=100, primary_key=True)
+    album_name = models.CharField(max_length=255)
+
+    @classmethod
+    def get_album(cls, song_id):
+        album = Album.objects.filter(spotify_id=artist_id).first()
+        return album
+
+    @classmethod
+    def create(cls, spotify_id, album_name):
+        album = cls(spotify_id=spotify_id, album_name=album_name)
+        return album
+
+    def get_songs(self):
+        return self.selected_related()
 
 class Song(models.Model):
-    spotify_id = models.CharField(max_length=100)
+    spotify_id = models.CharField(max_length=100, primary_key=True)
     song_name = models.CharField(max_length=255)
     artists = models.ManyToManyField(Artist)
+    album = models.ForeignKey(Album, on_delete=models.CASCADE)
     audio_features = models.ForeignKey(AudioFeatures, null=True, on_delete=models.SET_NULL)
 
     @classmethod
