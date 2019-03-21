@@ -5,7 +5,6 @@ from .models import Song, Artist, AudioFeatures, Album
 import requests
 import json
 
-# https://stackoverflow.com/questions/3738381/what-do-i-do-when-i-need-a-self-referential-dictionary
 class SpotifyRequestManager:
     """
     This class handles the request to the spotify API.
@@ -16,25 +15,26 @@ class SpotifyRequestManager:
     """
     This is a helper dictionary that builds the API path of different resources 
     """
-    p_builder = {
-        "album" : lambda album_id : "albums/" + album_id,
-        "album_tracks" : lambda album_id : "albums/" + album_id + "/tracks",
-        #"album_tracks" : lambda album_id : p_builder['album'](album_id), + "/tracks" # this doesn't work unfortunately
-        "track" : lambda track_id : "tracks/" + track_id,
-        "audio-features" : lambda track_id : "audio-features/" + track_id,
-        "artist" : lambda artist_id : "artists/" + artist_id,
-    }
-
-    search_builder = {
-        "tracks" : "get_song",
-        "albums" : "get_album",
-        "artists" : "get_artists",
-        "playlists" : "get_playlists"
-    }
-
     def __init__(self, social):
         self.social = social
         self.refresh_access_token()
+        self.p_builder = {
+            "album" : lambda album_id : "albums/" + album_id,
+            #"album_tracks" : lambda album_id : "albums/" + album_id + "/tracks",
+            "album_tracks" : lambda album_id : self.p_builder['album'](album_id) + "/tracks", # this doesn't work unfortunately
+            "track" : lambda track_id : "tracks/" + track_id,
+            "audio-features" : lambda track_id : "audio-features/" + track_id,
+            "artist" : lambda artist_id : "artists/" + artist_id,
+            "search" : "search?",
+        }
+        # this is a dict that is used for the search in the Spotify API
+        # it builds the list of items using the JSON and methods in the class
+        self.search_builder = {
+            "tracks" : lambda r_data : [self.get_song(json['id']) for json in r_data['items']],
+            "albums" : lambda r_data : [self.get_album(json['id']) for json in r_data['items']],
+            "artists" : lambda r_data : self.get_artists([json['id'] for json in r_data['items']], r_data['items']),
+            #"playlists" : get_playlist,
+        }
 
     def refresh_access_token(self):
         """
@@ -44,6 +44,12 @@ class SpotifyRequestManager:
         self.social.refresh_token(strategy)
 
     def query_executor(self, query_path, query_dict=None):
+        """
+        This method executes a query given the adress's path (IE .../album/)
+        The query_dict is the list of parameters that can be added and encoded in the query
+        It returns the response's text in a JSON encoded form
+        """
+
         query = settings.SPOTIFY_BASE_URL + query_path
         if(not(query_dict == None)):
             query += urlencode(query_dict)
@@ -53,7 +59,7 @@ class SpotifyRequestManager:
 
     def get_song(self, spotify_id, album=None):
         """
-
+        This method checks in the DB if a specific song (spotify_id) exists. If not, it builds it and returns it
         """
         song = Song.get_song(spotify_id)
         if(song == None):
@@ -73,6 +79,10 @@ class SpotifyRequestManager:
         return audio_features
 
     def get_album(self, album_id, request_payload=None):
+        """
+        This method checks in the DB if a specific album (album_id) exists. If not, it builds it and returns it
+        You can specify data in a JSON form for a previous request to prevent multiple API acesses for no reason
+        """
         album = Album.get_album(album_id)
         if(album == None):
             if(request_payload == None):
@@ -96,6 +106,11 @@ class SpotifyRequestManager:
         return songs
 
     def get_artists(self, artist_ids, request_payload = None):
+        """
+        This method checks in the database if a list of artists (artist_ids) exist
+        If they don't they are queried to the API
+        The request_payload can be used to provide a previous request result that contains the data we need
+        """
         artists = []
 
         for id, artist_payload in zip(artist_ids, request_payload):
@@ -107,6 +122,9 @@ class SpotifyRequestManager:
             artists.append(artist)
         return artists
 
+    def get_playlist(self):
+        pass
+
     def search_item(self, query_item, item_types, limit=5):
         """
         Search on the API for an item.
@@ -117,13 +135,27 @@ class SpotifyRequestManager:
         query_dict['type'] = ','.join(item_types)
         query_dict['limit'] = str(limit)
 
-        response = self.query_executor("search?", query_dict)
+        response = self.query_executor(self.p_builder['search'], query_dict)
+
+        # items are songs, artists, albums, playlists, etc.
+        items = {}
+        for item_type in response:
+            # each item's list will be built using its JSON slice
+            items[item_type] = self.search_builder[item_type](response[item_type])
+
+        """ for key, value in items.items():
+            print(key)
+            for item in value:
+                print(item.name) """
+       
+        #for resource_type in response:
+            #self.search_builder[resource_type]
 
     def song_factory(self, json_response, album=None):
         """
         This method is a helper ""factory"" to build a song
         It will request the audio features and check if artists exist in the DB already, if not build them and save them into the DB
-        The AudioFeatures for the song will be requested to the API
+        The AudioFeatures, for the song will be requested to the API
         """
         artist_ids = [artist_dict['id'] for artist_dict in json_response['artists']]
         artists = self.get_artists(artist_ids, json_response['artists'])
@@ -138,6 +170,9 @@ class SpotifyRequestManager:
         return song
     
     def album_factory(self, album_dict):
+        """
+        This method build an album and saves it into the DB given a JSON Spotify API response
+        """
         album = Album.create(album_dict['id'], album_dict['name'])
         album.save()
         return album
@@ -149,10 +184,7 @@ class SpotifyRequestManager:
         If they are not in the DB, they will saved into it
         It does not need to request further informations to the API 
         """
-
         artist = None
-
-
         artist = Artist.create(artists_dict['id'], artists_dict['name'])
         artist.save()
         return artist
