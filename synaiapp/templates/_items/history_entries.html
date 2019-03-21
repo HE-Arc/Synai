@@ -32,16 +32,8 @@
     <script type="text/javascript">
 
     let charts = [];
-    {% for analys in analysis %}
-    charts.push(new BarChart('graph{{ analys.id }}', {{ analysis_headers|safe }}, [
-        {{ analys.summarised_audio_features.acousticness }},
-        {{ analys.summarised_audio_features.danceability }},
-        {{ analys.summarised_audio_features.energy }},
-        {{ analys.summarised_audio_features.instrumentalness }},
-        {{ analys.summarised_audio_features.liveness }},
-        {{ analys.summarised_audio_features.valence }},
-        {{ analys.summarised_audio_features.speechiness }},
-        ], 'BarChart'));
+    {% for analy_id, dataset in analysis_dataset.items %}
+    charts.push(new LinesChart('graph{{ analy_id }}', {{ dataset |safe }}, 'LinesChart'));
     {% endfor %}
 
     window.onresize = function()

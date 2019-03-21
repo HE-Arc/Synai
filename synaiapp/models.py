@@ -132,4 +132,16 @@ class Analysis(models.Model):
         # Doit être dans feedView !
         audio_features = [song.audio_features for song in listSong]
         return AudioFeatures.summarise(audio_features)
+
+    def asDataset(self):
+        return [
+            ["Feature", "song1", "song2"],
+            ["Acousticness", 0.1, 0.1],
+            ["Danceability", 0.2, 0.2],
+            ["Energy", 0.3, 0.3],
+            ["Instrumentalness", 0.4, 0.4],
+            ["Liveness", 0.5, 0.5],
+            ["Valence", 0.6, 0.6],
+            ["Speechiness", 0.7, 0.7],
+        ]
     

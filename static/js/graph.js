@@ -1,4 +1,57 @@
 /**
+ * Lines chart
+ */
+class LinesChart {
+    constructor(id, data, text, subtext="")
+    {
+        this.id = id;
+        this.data = data;
+        this.text = text;
+        this.subtext = subtext;
+        console.log(data);
+        this.chart = echarts.init(document.getElementById(this.id));
+        this.chart.setOption(this.options);
+    }
+
+    get options()
+    {
+        let legend = {};
+
+        let tooltip = {
+            'trigger': 'axis',
+            'showContent': false
+        };
+
+        let dataset = {
+            'source': this.data
+        };
+
+        let xAxis = {
+            'type': 'category'
+        };
+
+        let yAxis = {
+            'gridIndex': 0
+        };
+
+        let series = this.series_type;
+
+        return {'legend': legend, 'tooltip': tooltip,
+            'dataset': dataset, 'xAxis': xAxis, 'yAxis': yAxis,
+            'series': series };
+    }
+
+    get series_type()
+    {
+        let lines_data = []
+        this.data.forEach(e => {
+            lines_data.push({'type': 'line', 'smooth': true, 'seriesLayoutBy': 'row'});
+        });
+        return lines_data;
+    }
+}
+
+/**
  * Pie chart
  */
 class PieChart {
