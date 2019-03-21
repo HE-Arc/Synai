@@ -18,6 +18,8 @@
             <th>#</th>
             <th>Name</th>
             <th>Danceability</th>
+            <th>Artist(s)</th>
+            <th>Album</th>
             <th>Actions</th>
           </tr>
         </thead>
@@ -25,13 +27,22 @@
         {% for song in object_list %}
         <tr>
             <td>
-                {{ song.pk }}
+              {{ song.pk }}
             </td>
             <td>
-                {{ song.song_name }}
+              {{ song.song_name }}
             </td>
             <td>
-                {{ song.audio_features.danceability|floatformat:2 }}
+              {{ song.audio_features.danceability|floatformat:2 }}
+            </td>
+            <td>
+              {% for artist in song.artists.all %}
+                {{ artist.artist_name }}
+                
+              {% endfor %}
+            </td>
+            <td>
+              {{song.album.album_name}}
             </td>
             <td>
               <a href="{% url 'song-detail' song.spotify_id %}" class="btn btn-primary btn-sm">Details</a>

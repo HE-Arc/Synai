@@ -5,12 +5,14 @@ from .models import Song, Artist, AudioFeatures, Album
 import requests
 import json
 
+
+
 class SpotifyRequestManager:
     """
     This class handles the request to the spotify API.
     You need to pass the social auth infos to the constructor such as :
     social = request.user.social_auth.get(provider="spotify")
-    """   
+    """
     def __init__(self, social):
         self.social = social
         self.refresh_access_token()
@@ -22,13 +24,14 @@ class SpotifyRequestManager:
         strategy = load_strategy()
         self.social.refresh_token(strategy)
 
+    
     def get_song(self, spotify_id):
         """
         This method will refresh the token, request a song to the API and save it in the database along with the artist, if not already saved
         2 requests will be sent to the API, one for the song and artist(s) and the audio features
         """
         response = requests.get(settings.SPOTIFY_BASE_URL + "tracks/" + spotify_id, params={'access_token' : self.social.extra_data['access_token']})
-        song = self.song_factory(api_response=response.text)
+        song = self.song_factory(json_response=json.loads(response.text))
         return song
 
     def get_audio_features(self, song_id):
@@ -42,7 +45,7 @@ class SpotifyRequestManager:
         audio_features = self.audio_features_factory(api_response=response.text)
         return audio_features
 
-    def get_album_tracks(self, album_id, req_song_id):
+    def get_album_tracks(self, album_id):
         """
         This method should be called as you request a song to the API
         It requests the album tracks 
@@ -52,10 +55,11 @@ class SpotifyRequestManager:
         tracks = []
         response = requests.get(settings.SPOTIFY_BASE_URL + "albums/" + album_id, params={'access_token' : self.social.extra_data['access_token']})
         j_vals = json.loads(response.text)
-        for json_track in j_vals['items']:
+        album = Album.get_album(album_id)
+        for json_track in j_vals['tracks']['items']:
             song = Song.get_song(json_track['id'])
             if song == None:
-                song = self.song_factory(json_track)
+                song = self.song_factory(json_track, album)
             tracks.append(song)
         return tracks
 
@@ -76,29 +80,30 @@ class SpotifyRequestManager:
         #response = requests.get(settings.SPOTIFY_BASE_URL + "search?q=" + query_item +  "&type=" + item_type + "&limit=" + str(limit), 
         #    params={'access_token' : self.social.extra_data['access_token']})
         response = requests.get(query, params={'access_token' : self.social.extra_data['access_token']})
+        print(response.text)
 
-    def song_factory(self, api_response):
+    def song_factory(self, json_response, album=None):
         """
         This method is a helper ""factory"" to build a song
         It will request the audio features and check if artists exist in the DB already, if not build them and save them into the DB
         The AudioFeatures for the song will be requested to the API
         """
-        json_response = json.loads(api_response)
         artists = self.artists_factory(json_response['artists'])
-        album = self.album_factory(json_response['album'])
+        if(album == None):
+            album = self.album_factory(json_response['album'])
         audio_features = self.get_audio_features(json_response['id'])
         
-        song = Song.create(json_response['id'], json_response['name'], audio_features)
+        song = Song.create(json_response['id'], json_response['name'], audio_features, album)
         song.save()
         [song.artists.add(artist) for artist in artists]
-        song.album = album_factory['']
-        
+
         return song
     
     def album_factory(self, album_dict):
         album = Album.get_album(album_dict['id'])
         if(album == None):
             album = Album.create(album_dict['id'], album_dict['name'])
+            album.save()
         return album
 
     def artists_factory(self, artists_dict):

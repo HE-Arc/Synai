@@ -8,7 +8,7 @@ from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from .services import SpotifyRequestManager
 
-from .models import Song, AudioFeatures, Analysis
+from .models import Song, AudioFeatures, Analysis, Album
 
 def home(request):
     if request.user.is_authenticated:
@@ -55,8 +55,11 @@ class FeedView(generic.TemplateView):
         context = super().get_context_data(**kwargs)
         # add context data
 
+        album = Album.objects.filter(album_name="Phenomena").first()
+
         manager = request_manager_factory(request)
-        manager.search_item("The last stand", "track")
+        tracks = manager.get_album_tracks(album.spotify_id)
+        #manager.search_item("The last stand", "track")
         audio_features = Analysis.analyseSongsForUser(Song.objects.all())
         context["audio_features"] = audio_features
         context["stats"] = [
