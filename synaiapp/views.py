@@ -57,16 +57,7 @@ class FeedView(generic.TemplateView):
         audio_features = Analysis.analyseSongsForUser(Song.objects.all())
         context["audio_features"] = audio_features
         context["stats"] = audio_features.asArray()
-        context["stats_headers"] = [
-            "Acousticness",
-            "Danceability",
-            "Energy",
-            "Instrumentalness",
-            "Liveness",
-            "Valence",
-            "Speechiness",
-            "Tempo"
-        ]
+        context["stats_headers"] = AudioFeatures.featuresHeaders()
         # Get correct recommandations
         context["recommandations"] = Song.objects.all()
         return render(request, FeedView.template_name, context)
@@ -84,15 +75,6 @@ class HistoryView(generic.TemplateView):
             analysis, songs, audioFeatures = Analysis.getUserHistory(self.request.user, order=-1)
 
         context["analysis"] = analysis
-        context["analysis_headers"] = [
-            "Acousticness",
-            "Danceability",
-            "Energy",
-            "Instrumentalness",
-            "Liveness",
-            "Valence",
-            "Speechiness",
-        ]
         context["analysis_len"] = len(analysis)
         context["songs"] = songs
         context["all_songs_len"] = len(songs)

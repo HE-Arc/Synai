@@ -3,6 +3,9 @@ from django.contrib.auth.models import User
 from functools import reduce
 from django.utils import timezone
 import json
+import logging
+
+logger = logging.getLogger(__name__)
 
 class AudioFeatures(models.Model):
     acousticness = models.FloatField()
@@ -47,6 +50,19 @@ class AudioFeatures(models.Model):
         af.tempo = audio_features['tempo']
 
         return af
+
+    @classmethod
+    def featuresHeaders(cls):
+        return [
+            "Acousticness",
+            "Danceability",
+            "Energy",
+            "Instrumentalness",
+            "Liveness",
+            "Valence",
+            "Speechiness",
+            "Tempo"
+        ]
 
     def asArray(self):
         return [
@@ -108,9 +124,11 @@ class Analysis(models.Model):
             analysis = Analysis.manager.filter(user=user).order_by('-created')
         else:
             analysis = Analysis.manager.filter(user=user).all()
-        songs = [ana.songs for ana in analysis]
+        songs = [ana.songs for ana in analysis] # get all songs of the analysis
+
+        
         # audioFeatures = [ ana.summarised_audio_features for ana in analysis]
-        audioFeatures = AudioFeatures.manager.all()
+        audioFeatures = AudioFeatures.manager.all() 
         return analysis, songs, audioFeatures
 
     @classmethod
@@ -134,14 +152,28 @@ class Analysis(models.Model):
         return AudioFeatures.summarise(audio_features)
 
     def asDataset(self):
-        return [
-            ["Feature", "song1", "song2"],
-            ["Acousticness", 0.1, 0.1],
-            ["Danceability", 0.2, 0.2],
-            ["Energy", 0.3, 0.3],
-            ["Instrumentalness", 0.4, 0.4],
-            ["Liveness", 0.5, 0.5],
-            ["Valence", 0.6, 0.6],
-            ["Speechiness", 0.7, 0.7],
-        ]
+        # Need to be optimized
+        features_headers = ["Feature"]
+        features_data = []
+        songs = self.songs.all()
+        audio_features_of_songs = [song.audio_features for song in songs]
+
+        # Foreach feature (acousticness, livness, valence,...)
+        features_attributes = [attr.lower() for attr in AudioFeatures.featuresHeaders()[:-1]]
+
+        for feature in features_attributes:
+            # Add the title
+            line = [feature]
+
+            # Add the value of the audio_feature of each song
+            for af in audio_features_of_songs:
+                value = getattr(af, feature, 0)
+                line.append(value)
+
+            features_data.append(line) # add in the dataset
+
+        # Create the first line of the header
+        features_headers.extend(song.song_name for song in songs)
+        features_data.insert(0, features_headers)
+        return features_data
     
