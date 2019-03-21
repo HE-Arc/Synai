@@ -54,12 +54,8 @@ class FeedView(generic.TemplateView):
     def get(self, request, *args, **kwargs):
         context = super().get_context_data(**kwargs)
         # add context data
-
-        album = Album.objects.filter(album_name="Phenomena").first()
-
         manager = request_manager_factory(request)
-        tracks = manager.get_album_tracks(album.spotify_id)
-        #manager.search_item("The last stand", "track")
+        manager.search_item("The last stand", ["track", "artist", "playlist", "album"], 1)
         audio_features = Analysis.analyseSongsForUser(Song.objects.all())
         context["audio_features"] = audio_features
         context["stats"] = [

@@ -5,14 +5,19 @@ from .models import Song, Artist, AudioFeatures, Album
 import requests
 import json
 
-
-
 class SpotifyRequestManager:
     """
     This class handles the request to the spotify API.
     You need to pass the social auth infos to the constructor such as :
     social = request.user.social_auth.get(provider="spotify")
     """
+
+    search_builder = {
+        "tracks" : "get_song",
+        "albums" : "get_album",
+        "artists" : "get_artists",
+        "playlists" : "get_playlists"
+    }
     def __init__(self, social):
         self.social = social
         self.refresh_access_token()
@@ -24,15 +29,27 @@ class SpotifyRequestManager:
         strategy = load_strategy()
         self.social.refresh_token(strategy)
 
-    
+    def query_executor(self, query_path, query_dict):
+        encoded = urlencode(query_dict)
+        query = settings.SPOTIFY_BASE_URL + query_path + encoded
+
+        response = requests.get(query, params={'access_token' : self.social.extra_data['access_token']})
+        return json.loads(response.text)
+
     def get_song(self, spotify_id):
         """
         This method will refresh the token, request a song to the API and save it in the database along with the artist, if not already saved
         2 requests will be sent to the API, one for the song and artist(s) and the audio features
         """
-        response = requests.get(settings.SPOTIFY_BASE_URL + "tracks/" + spotify_id, params={'access_token' : self.social.extra_data['access_token']})
-        song = self.song_factory(json_response=json.loads(response.text))
+        song = Song.get_song(spotify_id)
+        if(song == None):
+            response = self.query_executor("tracks/" + spotify_id)
+            song = self.song_factory(response)
         return song
+
+    def get_album(self, spotify_id):
+        album = Album.get_album(spotify_id)
+        if(song == None):
 
     def get_audio_features(self, song_id):
         """
@@ -63,24 +80,17 @@ class SpotifyRequestManager:
             tracks.append(song)
         return tracks
 
-    def search_item(self, query_item, item_type, limit=5):
+    def search_item(self, query_item, item_types, limit=5):
         """
         Search on the API for an item.
         Type is track, artist, playlist, album, etc.
         """
         query_dict = {}
         query_dict['q'] = query_item
-        query_dict['type'] = item_type
+        query_dict['type'] = ','.join(item_types)
         query_dict['limit'] = str(limit)
 
-        encoded = urlencode(query_dict)
-
-        query = settings.SPOTIFY_BASE_URL + "search?" + encoded
-
-        #response = requests.get(settings.SPOTIFY_BASE_URL + "search?q=" + query_item +  "&type=" + item_type + "&limit=" + str(limit), 
-        #    params={'access_token' : self.social.extra_data['access_token']})
-        response = requests.get(query, params={'access_token' : self.social.extra_data['access_token']})
-        print(response.text)
+        response = self.query_executor("search?", query_dict)
 
     def song_factory(self, json_response, album=None):
         """
