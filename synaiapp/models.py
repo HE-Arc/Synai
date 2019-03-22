@@ -77,8 +77,8 @@ class AudioFeatures(models.Model):
         ]
 
 class Artist(models.Model):
-    spotify_id = models.CharField(max_length=100)
-    artist_name = models.CharField(max_length=255)
+    spotify_id = models.CharField(max_length=100, unique=True)
+    name = models.CharField(max_length=255)
 
     @classmethod
     def get_artist(cls, artist_id):
@@ -86,15 +86,32 @@ class Artist(models.Model):
         return artist
     
     @classmethod
-    def create(cls, spotify_id, artist_name):
-        artist = cls(spotify_id=spotify_id, artist_name=artist_name)
+    def create(cls, spotify_id, name):
+        artist = cls(spotify_id=spotify_id, name=name)
         return artist
 
+class Album(models.Model):
+    spotify_id = models.CharField(max_length=100, unique=True)
+    name = models.CharField(max_length=255)
+
+    @classmethod
+    def get_album(cls, album_id):
+        album = Album.objects.filter(spotify_id=album_id).first()
+        return album
+
+    @classmethod
+    def create(cls, spotify_id, name):
+        album = cls(spotify_id=spotify_id, name=name)
+        return album
+
+    def get_songs(self):
+        return self.selected_related()
 
 class Song(models.Model):
-    spotify_id = models.CharField(max_length=100)
-    song_name = models.CharField(max_length=255)
+    spotify_id = models.CharField(max_length=100, unique=True)
+    name = models.CharField(max_length=255)
     artists = models.ManyToManyField(Artist)
+    album = models.ForeignKey(Album, null=True, on_delete=models.SET_NULL)
     audio_features = models.ForeignKey(AudioFeatures, null=True, on_delete=models.SET_NULL)
 
     @classmethod
@@ -102,8 +119,8 @@ class Song(models.Model):
         return cls.objects.filter(spotify_id=song_req_id).first()
 
     @classmethod
-    def create(cls, song_id, song_name, audio_features):
-        song = cls(spotify_id = song_id, song_name=song_name, audio_features=audio_features)
+    def create(cls, song_id, name, audio_features, album):
+        song = cls(spotify_id = song_id, name=name, audio_features=audio_features, album = album)
         return song
 
 class Analysis(models.Model):
