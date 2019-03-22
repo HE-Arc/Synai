@@ -23,6 +23,7 @@ class SpotifyRequestManager:
             #"album_tracks" : lambda album_id : "albums/" + album_id + "/tracks",
             "album_tracks" : lambda album_id : self.p_builder['album'](album_id) + "/tracks", # this doesn't work unfortunately
             "track" : lambda track_id : "tracks/" + track_id,
+            "tracks" : "tracks?",
             "audio-features" : lambda track_id : "audio-features/" + track_id,
             "artist" : lambda artist_id : "artists/" + artist_id,
             "search" : "search?",
@@ -30,7 +31,7 @@ class SpotifyRequestManager:
         # this is a dict that is used for the search in the Spotify API
         # it builds the list of items using the JSON and methods in the class
         self.search_builder = {
-            "tracks" : lambda r_data : [self.get_song(json['id']) for json in r_data['items']],
+            "tracks" : lambda r_data : self.get_songs([json['id'] for json in r_data['items']]),
             "albums" : lambda r_data : [self.get_album(json['id']) for json in r_data['items']],
             "artists" : lambda r_data : self.get_artists([json['id'] for json in r_data['items']], r_data['items']),
             #"playlists" : get_playlist,
@@ -49,7 +50,6 @@ class SpotifyRequestManager:
         The query_dict is the list of parameters that can be added and encoded in the query
         It returns the response's text in a JSON encoded form
         """
-
         query = settings.SPOTIFY_BASE_URL + query_path
         if(not(query_dict == None)):
             query += urlencode(query_dict)
@@ -57,15 +57,28 @@ class SpotifyRequestManager:
         response = requests.get(query, params={'access_token' : self.social.extra_data['access_token']})
         return json.loads(response.text)
 
-    def get_song(self, spotify_id, album=None):
+    def get_songs(self, spotify_ids, album=None):
         """
-        This method checks in the DB if a specific song (spotify_id) exists. If not, it builds it and returns it
+        This method checks in the DB if the songs (spotify_ids) exists. If not, it builds them and returns them
         """
-        song = Song.get_song(spotify_id)
-        if(song == None):
-            response = self.query_executor(self.p_builder['track'](spotify_id))
-            song = self.song_factory(response, album)
-        return song
+        # remove the part if you got the song whole URI 
+        # maybe remove this in prod
+        spotify_ids = [id.split(':')[-1] for id in spotify_ids]
+
+        songs = list(Song.objects.filter(spotify_id__in=spotify_ids))
+
+        missing_ids = list(set(spotify_ids) - set([song.spotify_id for song in songs]))
+        # if we have missing ids we query the API
+        if(len(missing_ids) != 0):
+            query_dict = {
+                'ids': ','.join(missing_ids)
+            }
+            response = self.query_executor(self.p_builder['tracks'], query_dict)
+            missing_songs = [self.song_factory(json_track) for json_track in response['tracks']]
+            # builds each track for each json slice in the api response
+            songs.extend(missing_songs)
+
+        return songs
 
     def get_audio_features(self, song_id):
         """
@@ -97,13 +110,9 @@ class SpotifyRequestManager:
         The audio features object will then be built and returned
         Given the spotify unique ID (song_id)
         """
-        songs = []
         response = self.query_executor(self.p_builder['album_tracks'](album_id))
         album = Album.get_album(album_id)
-        for json_track in response['items']:
-            song = self.get_song(json_track['id'], album)
-            songs.append(song)
-        return songs
+        return self.get_songs([json_track['id'] for json_track in response['items']])
 
     def get_artists(self, artist_ids, request_payload = None):
         """
@@ -143,13 +152,7 @@ class SpotifyRequestManager:
             # each item's list will be built using its JSON slice
             items[item_type] = self.search_builder[item_type](response[item_type])
 
-        """ for key, value in items.items():
-            print(key)
-            for item in value:
-                print(item.name) """
-       
-        #for resource_type in response:
-            #self.search_builder[resource_type]
+        return items
 
     def song_factory(self, json_response, album=None):
         """

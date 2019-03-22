@@ -8,14 +8,14 @@
   <div class="row">
     <div class="col-md-8">
       <p class="lead text-muted">This is a display test page for deployment and early development.</p>
-      <h1 class="display-3">{{ song.song_name }}</h1>
+      <h1 class="display-3">{{ song.name }}</h1>
       <h2 class="display-5 font-weight-light">{{ song.spotify_id }}</h2>
       <h3 class="display-4">Artists</h3>  
       {% for artist in artists %}
-          <p class="display-5">{{ artist.artist_name }}</p>
+          <p class="display-5">{{ artist.name }}</p>
       {% endfor %}
       <p class="display-4">Album</p>
-      <p class="display-5">{{ song.album.album_name }}</p>
+      <p class="display-5">{{ song.album.name }}</p>
       <div class="card text-white bg-danger mr-3 mb-3" style="max-width: 18rem;">
         <div class="card-body">
           <h5 class="card-title">Danceability</h5>

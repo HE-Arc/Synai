@@ -30,19 +30,19 @@
               {{ song.pk }}
             </td>
             <td>
-              {{ song.song_name }}
+              {{ song.name }}
             </td>
             <td>
               {{ song.audio_features.danceability|floatformat:2 }}
             </td>
             <td>
               {% for artist in song.artists.all %}
-                {{ artist.artist_name }}
+                {{ artist.name }}
                 
               {% endfor %}
             </td>
             <td>
-              {{song.album.album_name}}
+              {{song.album.name}}
             </td>
             <td>
               <a href="{% url 'song-detail' song.spotify_id %}" class="btn btn-primary btn-sm">Details</a>
