@@ -190,7 +190,7 @@ class Analysis(models.Model):
             features_data.append(line) # add in the dataset
 
         # Create the first line of the header
-        features_headers.extend(song.song_name for song in songs)
+        features_headers.extend(song.name for song in songs)
         features_data.insert(0, features_headers)
         return features_data
     
