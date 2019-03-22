@@ -7,6 +7,9 @@ set :repo_url, "https://github.com/HE-Arc/Synai.git"
 after 'deploy:updating', 'python:create_venv'
 
 after 'deploy:publishing', 'uwsgi:restart'
+after 'deploy:publishing', 'nginx:restart'
+
+
 
 namespace :uwsgi do
     desc 'Restart application'
@@ -28,14 +31,46 @@ namespace :python do
         on roles([:app, :web]) do |h|
 	    execute "python3.6 -m venv #{venv_path}"
         execute "source #{venv_path}/bin/activate"
+        execute "cd #{release_path}"
+        #execute "#{venv_path}/bin/pip install -r requirements.txt"
         execute "#{venv_path}/bin/pip install -r #{release_path}/requirements.txt"
         #execute "python3.6 #{release_path}/manage.py makemigrations"
         #execute "python3.6 #{release_path}/manage.py fixtures"
-        execute "cp /etc/container_environment/.env #{release_path}/"
-	    execute "python3.6 #{release_path}/manage.py migrate"
+        execute "cp /etc/container_environment/.env #{release_path}/.env"
+	    execute "#{venv_path}/bin/python #{release_path}/manage.py migrate"
         end
     end
 end
+
+
+after 'deploy:updated', 'django:collect_static'
+after 'deploy:updated', 'django:setProd'
+
+namespace :django do
+# thanks PayPixPlace
+    desc 'Collect static files'
+    task :collect_static do
+        on roles([:app, :web]) do |h|
+        execute "#{venv_path}/bin/python #{release_path}/manage.py collectstatic --noinput"
+        end
+    end
+
+    desc 'set debug to False'
+    task :setProd do
+        on roles([:app, :web]) do |h|
+        execute "sed -i 's/DEBUG = True/DEBUG = False/g' #{release_path}/Synai/settings.py"
+        end
+    end
+end
+
+namespace :nginx do
+    desc 'Restart nginx'
+    task :restart do
+      on roles(:web) do |h|
+        execute :sudo, 'sv reload nginx'
+      end
+    end
+  end
 
 # Default branch is :master
 # ask :branch, `git rev-parse --abbrev-ref HEAD`.chomp
