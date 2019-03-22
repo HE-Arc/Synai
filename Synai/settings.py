@@ -36,7 +36,7 @@ INTERNAL_IPS = [
     '127.0.0.1',
 ]
 
-STATIC_ROOT = '../static'
+STATIC_ROOT = '#{release_path}/static'
 
 
 # Application definition
