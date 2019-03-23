@@ -2,6 +2,7 @@
 lock "~> 3.11.0"
 
 set :application, "Synai"
+set :branch, ENV['BRANCH'] if ENV['BRANCH']
 set :repo_url, "https://github.com/HE-Arc/Synai.git"
 
 after 'deploy:updating', 'python:create_venv'
