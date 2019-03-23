@@ -18,23 +18,38 @@
             <th>#</th>
             <th>Name</th>
             <th>Danceability</th>
+            <th>Artist(s)</th>
+            <th>Album</th>
             <th>Actions</th>
+            <th>Player</th>
           </tr>
         </thead>
 
         {% for song in object_list %}
         <tr>
             <td>
-                {{ song.pk }}
+              {{ song.pk }}
             </td>
             <td>
-                {{ song.song_name }}
+              {{ song.name }}
             </td>
             <td>
-                {{ song.audio_features.danceability|floatformat:2 }}
+              {{ song.audio_features.danceability|floatformat:2 }}
+            </td>
+            <td>
+              {% for artist in song.artists.all %}
+                {{ artist.name }}
+                
+              {% endfor %}
+            </td>
+            <td>
+              {{song.album.name}}
             </td>
             <td>
               <a href="{% url 'song-detail' song.spotify_id %}" class="btn btn-primary btn-sm">Details</a>
+            </td>
+            <td>
+                <iframe src="https://open.spotify.com/embed/track/{{ song.spotify_id }}" width="300" height="80" frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>
             </td>
         </tr>
         {% endfor %}

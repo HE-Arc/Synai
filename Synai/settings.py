@@ -32,6 +32,12 @@ ALLOWED_HOSTS = [
     'localhost',
     ]
 
+INTERNAL_IPS = [
+    '127.0.0.1',
+]
+
+STATIC_ROOT = '#{release_path}/static'
+
 
 # Application definition
 
@@ -42,11 +48,12 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework',
     'synaiapp',
     'django_seed',
     'bootstrap4',
     'social_django',
-    'rest_framework',
+    'debug_toolbar',
 ]
 
 MIDDLEWARE = [
@@ -57,6 +64,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
 ]
 
 ROOT_URLCONF = 'Synai.urls'

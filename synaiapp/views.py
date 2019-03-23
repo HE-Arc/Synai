@@ -8,7 +8,7 @@ from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from .services import SpotifyRequestManager
 
-from .models import Song, AudioFeatures, Analysis
+from .models import Song, AudioFeatures, Analysis, Album
 
 def home(request):
     if request.user.is_authenticated:
@@ -54,28 +54,20 @@ class FeedView(generic.TemplateView):
     def get(self, request, *args, **kwargs):
         context = super().get_context_data(**kwargs)
         # add context data
+        manager = request_manager_factory(request)
+        #manager.get_songs(['1yJzoX4xPsACzVxUarXRKa', '5ugCgHftDye3SLUM8tSVH0', '6tGtmVVS8ccFbJmewqhUTg', 'spotify:track:0CcQNd8CINkwQfe1RDtGV6'])
+        items = manager.search_item("Winged hussars", ["track", "artist", "album"], 5)
+
+        """for track in items['tracks']:
+            print(track.name)
+            print(track.album.name)"""
+
         audio_features = Analysis.analyseSongsForUser(Song.objects.all())
         context["audio_features"] = audio_features
-        context["stats"] = [
-            audio_features.acousticness,
-            audio_features.danceability,
-            audio_features.energy,
-            audio_features.instrumentalness,
-            audio_features.liveness,
-            audio_features.valence,
-            audio_features.speechiness,
-            audio_features.tempo/100
-        ]
-        context["stats_headers"] = [
-            "Acousticness",
-            "Danceability",
-            "Energy",
-            "Instrumentalness",
-            "Liveness",
-            "Valence",
-            "Speechiness",
-            "Tempo"
-        ]
+        context["stats"] = audio_features.asArray()
+        context["stats_headers"] = AudioFeatures.featuresHeaders()
+        # Get correct recommandations
+        context["recommandations"] = Song.objects.all()
         return render(request, FeedView.template_name, context)
 
 class HistoryView(generic.TemplateView):
@@ -84,11 +76,19 @@ class HistoryView(generic.TemplateView):
     @method_decorator(login_required)
     def get(self, request, *args, **kwargs):
         context = super().get_context_data()
-        analysis, songs, audioFeatures = Analysis.getUserHistory(self.request.user)
+        sort_by = request.GET.get('sort','')
+        if sort_by:
+            analysis, songs, audioFeatures = Analysis.getUserHistory(self.request.user)
+        else:
+            analysis, songs, audioFeatures = Analysis.getUserHistory(self.request.user, order=-1)
+
         context["analysis"] = analysis
         context["analysis_len"] = len(analysis)
         context["songs"] = songs
         context["all_songs_len"] = len(songs)
+
+        # for graphs use
+        context["analysis_dataset"] = dict(zip([analy.id for analy in analysis], [analy.asDataset() for analy in analysis]))
         return render(request, HistoryView.template_name, context)
 
 

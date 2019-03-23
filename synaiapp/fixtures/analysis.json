@@ -5,7 +5,7 @@
         "fields": {
             "songs": [1],
             "user": 1,
-            "summarised_audio_features":1,
+            "summarised_audio_features":4,
             "songs_len":1,
             "created": "2019-03-02 14:04:47.308423"
         }
@@ -16,7 +16,7 @@
         "fields": {
             "songs": [2],
             "user": 1,
-            "summarised_audio_features":2,
+            "summarised_audio_features":5,
             "songs_len":1,
             "created": "2019-03-03 14:04:47.308423"
         }
@@ -27,7 +27,7 @@
         "fields": {
             "songs": [3],
             "user": 1,
-            "summarised_audio_features":3,
+            "summarised_audio_features":6,
             "songs_len":1,
             "created": "2019-03-04 14:04:47.308423"
         }
