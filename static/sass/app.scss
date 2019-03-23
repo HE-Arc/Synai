@@ -48,11 +48,11 @@ a {
     margin-top: 1px;
     margin-bottom: 5px;
   }
+}
 
-  :hover {
-    border-color:$dark-sweet-lime; 
-    box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
-  }
+.navbar-toggler:hover {
+  border-color:$dark-sweet-lime; 
+  box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
 }
 
 .nav-item {
@@ -62,10 +62,10 @@ a {
 
   box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
   transition: all 0.3s cubic-bezier(.25,.8,.25,1);
+}
 
-  :hover {
-    box-shadow: 0 5px 10px rgba($dark-sweet-lime,0.25), 0 7px 7px rgba($dark-sweet-lime, 0.22);
-  }
+.nav-item:hover {
+  box-shadow: 0 5px 10px rgba($dark-sweet-lime,0.25), 0 7px 7px rgba($dark-sweet-lime, 0.22);
 }
 
 .nav-link {
@@ -110,10 +110,10 @@ a {
   margin: 3%;
   box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
   transition: all 0.3s cubic-bezier(.25,.8,.25,1);
+}
 
-  :hover {
-    box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
-  }
+.historyentry:hover {
+  box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
 }
 
 .historyentry-header {
