@@ -9,10 +9,81 @@ h1 {
   font-size: 10em;
 }
 
+a {
+  color: #230800 !important;
+}
+
 .row {
   margin: 10px;
 }
 
+/* Bootstrap */
+/* Navigation */
+.navbar {
+  background-color: #F2E5D7;
+}
+
+.navbar-brand {
+  color: #230800;
+}
+
+.navbar-toggler {
+  background-color: #C9D720 !important;
+  width: 47px;
+  height: 34px;
+}
+.navbar-toggler .line {
+  background-color: #fff !important;
+  width: 100%;
+  float: left;
+  height: 3px;
+  margin-top: 1px;
+  margin-bottom: 5px;
+}
+.navbar-toggler :hover {
+  border-color: #A9B700;
+  box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
+}
+
+.nav-item {
+  border-radius: 5px;
+  background-color: #fff;
+  margin-left: 5px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+.nav-item :hover {
+  box-shadow: 0 5px 10px rgba(169, 183, 0, 0.25), 0 7px 7px rgba(169, 183, 0, 0.22);
+}
+
+.nav-link {
+  color: #C9D720 !important;
+}
+.nav-link :after {
+  color: #A9B700 !important;
+}
+
+.nav-pills .active {
+  background-color: #C9D720 !important;
+  color: #fff !important;
+}
+
+.jumbotron {
+  background-color: #F2E5D7 !important;
+}
+.jumbotron .list-group-item {
+  background-color: #F2E5D7 !important;
+}
+
+@media screen and (max-width: 991px) {
+  .nav-item {
+    padding-left: 5%;
+    margin-bottom: 1%;
+  }
+  .nav-item :hover {
+    box-shadow: none;
+  }
+}
 /* History entry */
 .historyentry {
   background-color: #A46449;
@@ -23,8 +94,7 @@ h1 {
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
   transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
 }
-
-.historyentry:hover {
+.historyentry :hover {
   box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
 }
 

@@ -6,12 +6,11 @@
         Recommandations
     </h1>
     <p class="lead">Check out these songes ! We're sure you'll like them ;)</p>
-    <hr class="my-4">
     <ul class="list-group list-group-flush text-center">
         {% for r_song in recommandations %}
         <li class="list-group-item">
             <iframe src="https://open.spotify.com/embed/track/{{ r_song.spotify_id }}" width="300" height="80" frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>
         </li>
         {% endfor %}
-    </ul>  
+    </ul>
 </div>
