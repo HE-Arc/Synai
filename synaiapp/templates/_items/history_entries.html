@@ -3,14 +3,24 @@
 {% load static %}
 
 {% for analys in analysis %}
-<div class="row justify-content-center">
-    <div id="entry" class="card">
-        <div class="card-header">
-            {{ analys.created }}
+<div class="historyentry">
+    <div class="historyentry-header">
+        <h3>On the {{ analys.created }}</h2>
+    </div>
+    <div class="historyentry-body">
+        <div class="">
+            <img src="static/note_icon.png" alt="datasource thumbnail" class="rounded float-right">
+            <p>
+                You've been listening to {{datasource}}<br/>
+                reaction: {{statistics_reaction}}
+            </p>
         </div>
-        <div class="card-body">
-            <p class="card-title">You analyzed {{ analys.songs_len }} songs</p>
-            <ul class="card-text">
+        <div class="">
+            
+        </div>
+        <div class="statistics">
+            <p>Here's the average statistics:</p>
+            <ul>
                 <li>Acousticness: {{analys.summarised_audio_features.acousticness}}</li>
                 <li>Danceability: {{analys.summarised_audio_features.danceability}}</li>
                 <li>Energy: {{analys.summarised_audio_features.energy}}</li>
@@ -20,9 +30,8 @@
                 <li>Speechiness: {{analys.summarised_audio_features.speechiness}}</li>
                 <li>Tempo: {{analys.summarised_audio_features.tempo}}</li>
             </ul>
-
-            <div id="graph{{ analys.id }}" style="height: 350px;"></div>
         </div>
+        <div id="graph{{ analys.id }}" style="height: 350px;"></div>
     </div>
 </div>
 {% endfor %}
