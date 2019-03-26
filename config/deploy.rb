@@ -57,7 +57,7 @@ namespace :django do
     desc 'set debug to False'
     task :setProd do
         on roles([:app, :web]) do |h|
-        execute "sed -i 's/DEBUG = True/DEBUG = False/g' #{release_path}/Synai/settings.py"
+        #execute "sed -i 's/DEBUG = True/DEBUG = False/g' #{release_path}/Synai/settings.py"
         end
     end
 end
