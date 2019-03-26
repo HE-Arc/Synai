@@ -30,7 +30,7 @@ urlpatterns = [
     # social auth app
     path('social/', include('social_django.urls', namespace='social')),
     path('', include('django.contrib.auth.urls')),  # add logout route
-]
+] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
 if settings.DEBUG:
     import debug_toolbar
