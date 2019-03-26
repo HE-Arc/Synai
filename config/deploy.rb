@@ -11,7 +11,6 @@ after 'deploy:publishing', 'uwsgi:restart'
 after 'deploy:publishing', 'nginx:restart'
 
 
-
 namespace :uwsgi do
     desc 'Restart application'
     task :restart do
@@ -35,7 +34,6 @@ namespace :python do
         execute "cd #{release_path}"
         #execute "#{venv_path}/bin/pip install -r requirements.txt"
         execute "#{venv_path}/bin/pip install -r #{release_path}/requirements.txt"
-        #execute "python3.6 #{release_path}/manage.py makemigrations"
         #execute "python3.6 #{release_path}/manage.py fixtures"
         execute "cp /etc/container_environment/.env #{release_path}/.env"
 	    execute "#{venv_path}/bin/python #{release_path}/manage.py migrate"
