@@ -4,8 +4,7 @@
         "pk":1,
         "fields": {
             "spotify_id":"3iaTTTIDDeh1vEdpLApbty",
-            "song_name":"Martyr",
-            "artist_id":"48vDIufGC8ujPuBiTxY8dm",
+            "name":"Martyr",
             "audio_features":1
         }
     },
@@ -14,8 +13,7 @@
         "pk":2,
         "fields": {
             "spotify_id":"3Yp9EQ8G9S2AlSew3R7p6I",
-            "song_name":"Heaven Up There",
-            "artist_id":"48vDIufGC8ujPuBiTxY8dm",
+            "name":"Heaven Up There",
             "audio_features":2
         }
     },
@@ -24,8 +22,7 @@
         "pk":3,
         "fields": {
             "spotify_id":"4IUKqnSIQIgtdaqEfUFJZf",
-            "song_name":"Live Well",
-            "artist_id":"48vDIufGC8ujPuBiTxY8dm",
+            "name":"Live Well",
             "audio_features":3
         }
     }

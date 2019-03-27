@@ -44,7 +44,8 @@ class SingleSongView(generic.TemplateView):
             
 
 class SongsListView(generic.ListView):
-    model = Song
+    #model = Song
+    queryset = Song.objects.prefetch_related('artists').select_related('audio_features').select_related('album').all()
     template_name="songs_list.html"
 
 class FeedView(generic.TemplateView):
@@ -55,14 +56,9 @@ class FeedView(generic.TemplateView):
         context = super().get_context_data(**kwargs)
         # add context data
         manager = request_manager_factory(request)
-        #manager.get_songs(['1yJzoX4xPsACzVxUarXRKa', '5ugCgHftDye3SLUM8tSVH0', '6tGtmVVS8ccFbJmewqhUTg', 'spotify:track:0CcQNd8CINkwQfe1RDtGV6'])
-        items = manager.search_item("Winged hussars", ["track", "artist", "album"], 5)
 
-        """for track in items['tracks']:
-            print(track.name)
-            print(track.album.name)"""
-
-        audio_features = Analysis.analyseSongsForUser(Song.objects.all())
+        songs = Song.objects.select_related('audio_features').all()
+        audio_features = Analysis.analyseSongsForUser(songs)
         context["audio_features"] = audio_features
         context["stats"] = audio_features.asArray()
         context["stats_headers"] = AudioFeatures.featuresHeaders()

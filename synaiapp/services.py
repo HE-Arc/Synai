@@ -62,7 +62,6 @@ class SpotifyRequestManager:
         This method checks in the DB if the songs (spotify_ids) exists. If not, it builds them and returns them
         """
         # remove the part if you got the song whole URI 
-        # maybe remove this in prod
         spotify_ids = [id.split(':')[-1] for id in spotify_ids]
 
         songs = list(Song.objects.filter(spotify_id__in=spotify_ids))
