@@ -16,6 +16,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, re_path, include
 from django.conf import settings
+from django.conf.urls.static import static
 
 from synaiapp import views
 
@@ -30,7 +31,7 @@ urlpatterns = [
     # social auth app
     path('social/', include('social_django.urls', namespace='social')),
     path('', include('django.contrib.auth.urls')),  # add logout route
-]
+] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
 if settings.DEBUG:
     import debug_toolbar

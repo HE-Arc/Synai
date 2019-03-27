@@ -186,6 +186,7 @@ class Analysis(models.Model):
         for feature in features_attributes:
             # Add the title
             line = [feature]
+            logger.error("ola")
 
             # Add the value of the audio_feature of each song
             for af in audio_features_of_songs:
