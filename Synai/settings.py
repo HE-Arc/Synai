@@ -36,10 +36,8 @@ INTERNAL_IPS = [
     '127.0.0.1',
 ]
 
-STATIC_ROOT = '#{release_path}/static'
 
-
-# Application definition
+# Application definition    
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -171,7 +169,8 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 
 STATIC_URL = '/static/'
+STATIC_ROOT = '/var/www/static/'
 
-STATICFILES_DIRS = [
+"""STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),
-]
+]"""
