@@ -1,0 +1,90 @@
+{% load bootstrap4 %}
+{% bootstrap_css %}
+{% load static %}
+
+<div id="myCarousel" class="carousel slide" data-ride="carousel">
+    <div class="carousel-inner row w-100 mx-auto">
+    {% for playlist in user_playlists %}
+        <div class="carousel-item col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title">PlaylistName</h4>
+                    <p class="card-text">
+                        Text to define
+                    </p>
+                    <p class="card-text">
+                        <small class="text-muted">Text to define</small>
+                    </p>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+        <div class="carousel-item col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title">PlaylistName</h4>
+                    <p class="card-text">
+                        Text to define
+                    </p>
+                    <p class="card-text">
+                        <small class="text-muted">Text to define</small>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        <div class="row">
+            <div class="col-12 text-center mt-4">
+                <a class="btn btn-outline-secondary mx-1 prev" href="javascript:void(0)" title="Previous">
+                    <i class="fa fa-lg fa-chevron-left"></i>
+                </a>
+                <a class="btn btn-outline-secondary mx-1 next" href="javascript:void(0)" title="Next">
+                    <i class="fa fa-lg fa-chevron-right"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block javascript %}
+<script type="text/javascript">
+(function ($) {
+    "use strict";
+    // Auto-scroll
+    $('#myCarousel').carousel({
+        interval: 5000
+    });
+  
+    // Control buttons
+    $('.next').click(function () {
+        $('.carousel').carousel('next');
+        return false;
+    });
+    $('.prev').click(function () {
+        $('.carousel').carousel('prev');
+        return false;
+    });
+  
+    // On carousel scroll
+    $("#myCarousel").on("slide.bs.carousel", function (e) {
+        var $e = $(e.relatedTarget);
+        var idx = $e.index();
+        var itemsPerSlide = 3;
+        var totalItems = $(".carousel-item").length;
+        if (idx >= totalItems - (itemsPerSlide - 1)) {
+            var it = itemsPerSlide - (totalItems - idx);
+            for (var i = 0; i < it; i++) {
+                // append slides to end 
+                if (e.direction == "left") {
+                    $(".carousel-item").eq(i).appendTo(".carousel-inner");
+                } else {
+                    $(".carousel-item").eq(0).appendTo(".carousel-inner");
+                }
+            }
+        }
+    });
+})
+(jQuery);
+</script>
+{% endblock %}
