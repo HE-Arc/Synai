@@ -137,12 +137,13 @@ class Analysis(models.Model):
         """
         Get the full analysis history of a user
         """
+        analysis = Analysis.manager.filter(user=user).prefetch_related('songs').select_related('summarised_audio_features')
+        
+        # yeah lazy load that analysis
         if order < 1:
-            analysis = Analysis.manager.filter(user=user).order_by('-created')
-        else:
-            analysis = Analysis.manager.filter(user=user).all()
-        songs = [ana.songs for ana in analysis] # get all songs of the analysis
+            analysis = analysis.order_by('-created')
 
+        songs = [ana.songs for ana in analysis] # get all songs of the analysis
         
         # audioFeatures = [ ana.summarised_audio_features for ana in analysis]
         audioFeatures = AudioFeatures.manager.all() 
@@ -160,21 +161,25 @@ class Analysis(models.Model):
             return None
     
     @classmethod
-    def analyseSongsForUser(cls, listSong):
+    def analyseSongsForUser(cls, songs):
         """
         Analyse a list of songs for a user and return the summary
         """
         # Doit être dans feedView !
-        audio_features = [song.audio_features for song in listSong]
-        return AudioFeatures.summarise(audio_features)
+        #songs = self.songs.all().selected_related('audio_features').all()
+        #songs = list(Song.objects.filter(spotify_id__in=spotify_ids))
+        #[print(song.audio_features) for song in songs]
+        return AudioFeatures.summarise([song.audio_features for song in songs])
 
     def asDataset(self):
         # Need to be optimized
         features_headers = ["Feature"]
         features_data = []
-        songs = self.songs.all()
+       
+        
+        songs = self.songs.select_related('audio_features').all()
         audio_features_of_songs = [song.audio_features for song in songs]
-
+        
         # Foreach feature (acousticness, livness, valence,...)
         features_attributes = [attr.lower() for attr in AudioFeatures.featuresHeaders()[:-1]]
 
