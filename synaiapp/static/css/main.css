@@ -22,6 +22,22 @@ a {
 .navbar {
   background-color: #F2E5D7;
 }
+.navbar .nav-item {
+  border-radius: 5px;
+  background-color: #fff;
+  margin-left: 5px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+.navbar .nav-item:hover {
+  box-shadow: 0 5px 10px rgba(169, 183, 0, 0.25), 0 7px 7px rgba(169, 183, 0, 0.22);
+}
+.navbar .nav-link {
+  color: #C9D720 !important;
+}
+.navbar .nav-link :after {
+  color: #A9B700 !important;
+}
 
 .navbar-brand {
   color: #230800;
@@ -46,28 +62,16 @@ a {
   box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
 }
 
-.nav-item {
-  border-radius: 5px;
-  background-color: #fff;
-  margin-left: 5px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
-  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-}
-
-.nav-item:hover {
-  box-shadow: 0 5px 10px rgba(169, 183, 0, 0.25), 0 7px 7px rgba(169, 183, 0, 0.22);
-}
-
-.nav-link {
-  color: #C9D720 !important;
-}
-.nav-link :after {
-  color: #A9B700 !important;
-}
-
 .nav-pills .active {
   background-color: #C9D720 !important;
   color: #fff !important;
+  border: none;
+}
+.nav-pills .nav-link {
+  border: 2px solid #C9D720;
+  border-radius: 1rem;
+  margin-left: 2px;
+  margin-right: 2px;
 }
 
 .jumbotron {
@@ -78,18 +82,18 @@ a {
 }
 
 @media screen and (max-width: 991px) {
-  .nav-item {
+  .navbar .nav-item {
     padding-left: 5%;
     margin-bottom: 1%;
+    box-shadow: none;
   }
-  .nav-item :hover {
+  .navbar .nav-item:hover {
     box-shadow: none;
   }
 }
 /* History entry */
 .historyentry {
-  background-color: #A46449;
-  color: #F2E5D7;
+  background-color: #C9D720;
   border-radius: 5px;
   padding: 3%;
   margin: 3%;
@@ -101,16 +105,26 @@ a {
   box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
 }
 
+.historyentry-header {
+  color: #230800;
+}
+
 .historyentry-body {
-  background-color: #F2E5D7;
+  background-color: #fff;
   color: #230800;
   border-radius: 5px;
   padding: 3%;
   margin: 3%;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12), 0 2px 4px rgba(0, 0, 0, 0.24);
 }
-.historyentry-body img {
-  max-width: 50%;
+.historyentry-body #history-img {
+  max-width: 64px;
+  max-height: 64px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12), 0 2px 4px rgba(0, 0, 0, 0.24);
+  margin-bottom: 6px;
+}
+.historyentry-body .media-body {
+  text-align: left;
 }
 
 /*# sourceMappingURL=main.css.map */

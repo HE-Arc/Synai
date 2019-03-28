@@ -53,10 +53,15 @@ class FeedView(generic.TemplateView):
 
     @method_decorator(login_required)
     def get(self, request, *args, **kwargs):
+        has_feed = False # TODO determine if has feed (using get param ?, form ?)
         context = super().get_context_data(**kwargs)
+        context['has_feed'] = has_feed
+        if has_feed:
+            # TODO add data if present
+            pass
+
         # add context data
         manager = request_manager_factory(request)
-
         songs = Song.objects.select_related('audio_features').all()
         audio_features = Analysis.analyseSongsForUser(songs)
         context["audio_features"] = audio_features

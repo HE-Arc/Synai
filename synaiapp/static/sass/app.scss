@@ -29,6 +29,26 @@ a {
 
 .navbar {
   background-color: $icecream-white;
+
+  .nav-item {
+    border-radius: 5px;
+    background-color: #fff;
+    margin-left: 5px;
+  
+    box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+    transition: all 0.3s cubic-bezier(.25,.8,.25,1);
+  }
+
+  .nav-item:hover {
+    box-shadow: 0 5px 10px rgba($dark-sweet-lime,0.25), 0 7px 7px rgba($dark-sweet-lime, 0.22);
+  }
+  
+  .nav-link {
+    color: $sweet-lime !important;
+    :after {
+      color: $dark-sweet-lime !important;
+    }
+  }
 }
 
 .navbar-brand {
@@ -55,30 +75,18 @@ a {
   box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
 }
 
-.nav-item {
-  border-radius: 5px;
-  background-color: #fff;
-  margin-left: 5px;
-
-  box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
-  transition: all 0.3s cubic-bezier(.25,.8,.25,1);
-}
-
-.nav-item:hover {
-  box-shadow: 0 5px 10px rgba($dark-sweet-lime,0.25), 0 7px 7px rgba($dark-sweet-lime, 0.22);
-}
-
-.nav-link {
-  color: $sweet-lime !important;
-  :after {
-    color: $dark-sweet-lime !important;
-  }
-}
-
 .nav-pills {
   .active {
     background-color: $sweet-lime !important;
     color: #fff !important;
+    border: none;
+  }
+
+  .nav-link {
+    border: 2px solid $sweet-lime;
+    border-radius: 1rem;
+    margin-left: 2px;
+    margin-right: 2px;
   }
 }
 
@@ -90,11 +98,13 @@ a {
 }
 
 @media screen and (max-width: 991px) {
-  .nav-item {
-    padding-left: 5%;
-    margin-bottom: 1%;
-
-    :hover {
+  .navbar {
+    .nav-item {
+      padding-left: 5%;
+      margin-bottom: 1%;
+      box-shadow: none;
+    }
+    .nav-item:hover {
       box-shadow: none;
     }
   }
@@ -103,8 +113,7 @@ a {
 /* History entry */
 
 .historyentry {
-  background-color: $old-faded-pink;
-  color: $icecream-white;
+  background-color: $sweet-lime;
   border-radius: 5px;
   padding: 3%;
   margin: 3%;
@@ -117,19 +126,26 @@ a {
 }
 
 .historyentry-header {
-  //
+  color: $warm-chocolate;
 }
 
 .historyentry-body {
-  background-color: $icecream-white;
+  background-color: #fff;
   color: $warm-chocolate;
   border-radius: 5px;
   padding: 3%;
   margin: 3%;
   box-shadow: 0 2px 6px rgba(0,0,0,0.12), 0 2px 4px rgba(0,0,0,0.24);
 
-  img {
-    max-width: 50%;
+  #history-img {
+    max-width: 64px;
+    max-height: 64px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.12), 0 2px 4px rgba(0,0,0,0.24);
+    margin-bottom: 6px;
+  }
+
+  .media-body {
+    text-align: left;
   }
 }
 

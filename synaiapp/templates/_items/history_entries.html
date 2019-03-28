@@ -5,17 +5,16 @@
 {% for analys in analysis %}
 <div class="historyentry">
     <div class="historyentry-header">
-        <h3>On the {{ analys.created }}</h2>
+        <h5>On the {{ analys.created }}</h5>
     </div>
     <div class="historyentry-body">
-        <div>
-            <img src="static/note_icon.png" alt="datasource thumbnail" class="rounded float-right">
-            <p>
-                You've been listening to {{datasource}}<br/>
-                reaction: {{statistics_reaction}}
+        <div class="media">
+            <p class="media-body">
+                You've been listening to {{datasource}}
             </p>
+            <img src="static/note_icon.png" alt="datasource thumbnail" id="history-img" class="rounded ml-3">
         </div>
-        <div>
+        <div class="">
             <p>Here's the average statistics:</p>
             <ul>
                 <li>Acousticness: {{analys.summarised_audio_features.acousticness}}</li>
@@ -28,7 +27,7 @@
                 <li>Tempo: {{analys.summarised_audio_features.tempo}}</li>
             </ul>
         </div>
-        <div id="graph{{ analys.id }}" style="height: 350px;"></div>
+        <div class="" id="graph{{ analys.id }}" style="height: 350px;"></div>
     </div>
 </div>
 {% endfor %}
