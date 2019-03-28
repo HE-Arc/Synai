@@ -22,8 +22,11 @@ def request_manager_factory(request):
     Returns the SpotifyRequestManager object built
     """ 
     social = request.user.social_auth.get(provider="spotify")
-    manager  = SpotifyRequestManager(social)
+    manager = SpotifyRequestManager(social)
     return manager
+
+def error_500(request):
+    return render(request, "api_request_error.html", status=500)
 
 class SingleSongView(generic.TemplateView):
     model = Song
@@ -36,7 +39,7 @@ class SingleSongView(generic.TemplateView):
         if(song == None):
             print("Song does not exists... Going to the API")
             manager = request_manager_factory(self.request)
-            song = manager.get_song(song_id)
+            song = manager.get_songs([song_id])[0]
 
         context['song'] = song
         context['artists'] = song.artists.all()
@@ -68,7 +71,7 @@ class FeedView(generic.TemplateView):
         context["stats"] = audio_features.asArray()
         context["stats_headers"] = AudioFeatures.featuresHeaders()
         # Get correct recommandations
-        context["recommandations"] = Song.objects.all()
+        context["recommandations"] = Song.objects.all()[:10]
         return render(request, FeedView.template_name, context)
 
 class HistoryView(generic.TemplateView):
@@ -92,7 +95,6 @@ class HistoryView(generic.TemplateView):
         context["analysis_dataset"] = dict(zip([analy.id for analy in analysis], [analy.asDataset() for analy in analysis]))
         return render(request, HistoryView.template_name, context)
 
-
 class DashboardView(generic.TemplateView):
     template_name = "dashboard.html"
 
@@ -103,3 +105,14 @@ class DashboardView(generic.TemplateView):
             "summary" : Analysis.getUserSummary(self.request.user)
             }
         return render(request, DashboardView.template_name, context)
+
+class SearchResultsView(generic.TemplateView):
+    template_name = "search_results.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        manager = request_manager_factory(self.request)
+        search_input = self.request.GET.get('search_input')
+        search_result = manager.search_item(search_input, ['track'])
+        context['tracks'] = search_result['tracks']
+        return context
