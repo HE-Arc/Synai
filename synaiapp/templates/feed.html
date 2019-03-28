@@ -28,10 +28,11 @@
             <div class="col-lg-6">
                 <div class="tab-content" id="pills-tabContent">
                     <div class="tab-pane fade show active" id="pills-search" role="tabpanel" aria-labelledby="pills-search-tab">
-                        <form class="form-inline row justify-content-center">
-                            <input class="form-control col-6" type="search" placeholder="Search" aria-label="Search">
-                            <button class="btn btn-success m-2 col-4" type="submit">Search</button>
+                        <form class="form-inline row justify-content-center" search-result-url="{% url "search_results" %}">
+                            <input class="form-control col-6" type="search" placeholder="Search" id="search_field" aria-label="Search">
+                            <button class="btn btn-success m-2 col-4" type="button" id="search_button">Search</button>
                         </form>
+                        <div class="row justify-content-center" id="search-content"></div>
                     </div>
                     <div class="tab-pane fade" id="pills-playlist" role="tabpanel" aria-labelledby="pills-playlist-tab-tab">
                         <p> {% lorem %} </p>
@@ -58,7 +59,9 @@
     </div>
 {% endblock %}
 {% block javascript %}
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/4.1.0/echarts-en.js" integrity="sha256-q4eNahhjrmTWF+LAesQ+rDagZhwcegBpS7qE0UAjJx4=" crossorigin="anonymous"></script>    <script src="{% static '/js/graph.js' %}"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/4.1.0/echarts-en.js" integrity="sha256-q4eNahhjrmTWF+LAesQ+rDagZhwcegBpS7qE0UAjJx4=" crossorigin="anonymous"></script>
+    <script src="{% static '/js/graph.js' %}"></script>
     <script type="text/javascript">
 
     let charts = [];
@@ -72,6 +75,26 @@
             element.chart.resize();
         });
     };
+
+    $("#search_button").click(function(){
+        var search_field_input = $("#search_field").val();
+        var form = $(this).closest("form");
+        $.ajax({
+            url: form.attr("search-result-url"),
+            type: 'GET',
+            data: {
+                'search_input': search_field_input
+            },
+            dataType: 'html',
+            success: function(data) {
+                $("#search-content").html(data);
+            }
+        });
+    });
+
+
+
+
     </script>
 
 {% endblock %}

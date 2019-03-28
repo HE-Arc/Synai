@@ -28,6 +28,7 @@ urlpatterns = [
     path('feed', views.FeedView.as_view(), name='feed'),
     path('history', views.HistoryView.as_view(), name='history'),
     path('dashboard', views.DashboardView.as_view(), name='dashboard'),
+    path('search_results', views.SearchResultsView.as_view(), name='search_results'),
     # social auth app
     path('social/', include('social_django.urls', namespace='social')),
     path('', include('django.contrib.auth.urls')),  # add logout route
