@@ -6,6 +6,8 @@ from django.views.generic import ListView
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
+
+# Services
 from .services import SpotifyRequestManager
 
 # Logger & debug
@@ -70,10 +72,10 @@ class FeedView(generic.TemplateView):
         # add context data
         manager = request_manager_factory(request)
         songs = Song.objects.select_related('audio_features').all()
-        audio_features = Analysis.analyseSongsForUser(songs)
+        audio_features = Analysis.analyse_songs_for_user(songs)
         context["audio_features"] = audio_features
-        context["stats"] = audio_features.asArray()
-        context["stats_headers"] = AudioFeatures.featuresHeaders()
+        context["stats"] = audio_features.as_array()
+        context["stats_headers"] = AudioFeatures.features_headers()
         # Get correct recommandations
         context["recommandations"] = Song.objects.all()[:10]
         return render(request, FeedView.template_name, context)
@@ -86,9 +88,9 @@ class HistoryView(generic.TemplateView):
         context = super().get_context_data()
         sort_by = request.GET.get('sort','')
         if sort_by:
-            analysis, songs, audioFeatures = Analysis.getUserHistory(self.request.user)
+            analysis, songs, audio_features = Analysis.get_user_history(self.request.user)
         else:
-            analysis, songs, audioFeatures = Analysis.getUserHistory(self.request.user, order=-1)
+            analysis, songs, audio_features = Analysis.get_user_history(self.request.user, order=-1)
 
         context["analysis"] = analysis
         context["analysis_len"] = len(analysis)
@@ -96,7 +98,7 @@ class HistoryView(generic.TemplateView):
         context["all_songs_len"] = len(songs)
 
         # for graphs use
-        context["analysis_dataset"] = dict(zip([analy.id for analy in analysis], [analy.historyDataset() for analy in analysis]))
+        context["analysis_dataset"] = dict(zip([analy.id for analy in analysis], [analy.history_dataset() for analy in analysis]))
         return render(request, HistoryView.template_name, context)
 
 class DashboardView(generic.TemplateView):
@@ -107,7 +109,7 @@ class DashboardView(generic.TemplateView):
         context = super().get_context_data()
 
         context["username"] = self.request.user.first_name
-        context["summarised_dataset"] = Analysis.getUserSummarisedData(self.request.user)
+        context["summarised_dataset"] = Analysis.get_user_summarised_data(self.request.user)
 
         return render(request, DashboardView.template_name, context)
 

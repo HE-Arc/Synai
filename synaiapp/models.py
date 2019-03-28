@@ -21,22 +21,22 @@ class AudioFeatures(models.Model):
     manager = models.Manager()
 
     @classmethod
-    def summarise(cls, AudioFeatureList):
+    def summarise(cls, audio_features_list):
         summary = AudioFeatures()
-        summary.acousticness = AudioFeatures.mean("acousticness", AudioFeatureList)
-        summary.danceability = AudioFeatures.mean("danceability", AudioFeatureList)
-        summary.energy = AudioFeatures.mean("energy", AudioFeatureList)
-        summary.instrumentalness = AudioFeatures.mean("instrumentalness", AudioFeatureList)
-        summary.liveness = AudioFeatures.mean("liveness", AudioFeatureList)
-        summary.valence = AudioFeatures.mean("valence", AudioFeatureList)
-        summary.speechiness = AudioFeatures.mean("speechiness", AudioFeatureList)
-        summary.tempo = AudioFeatures.mean("tempo", AudioFeatureList)
+        summary.acousticness = AudioFeatures.mean("acousticness", audio_features_list)
+        summary.danceability = AudioFeatures.mean("danceability", audio_features_list)
+        summary.energy = AudioFeatures.mean("energy", audio_features_list)
+        summary.instrumentalness = AudioFeatures.mean("instrumentalness", audio_features_list)
+        summary.liveness = AudioFeatures.mean("liveness", audio_features_list)
+        summary.valence = AudioFeatures.mean("valence", audio_features_list)
+        summary.speechiness = AudioFeatures.mean("speechiness", audio_features_list)
+        summary.tempo = AudioFeatures.mean("tempo", audio_features_list)
         return summary
 
     
     @classmethod
-    def mean(cls, attribute, AudioFeaturelist):
-        return reduce(lambda a, b: a+b, [getattr(x, attribute, 0) for x in AudioFeaturelist]) /len(AudioFeaturelist)
+    def mean(cls, attribute, audio_features_list):
+        return reduce(lambda a, b: a+b, [getattr(x, attribute, 0) for x in audio_features_list]) /len(audio_features_list)
     
     @classmethod
     def create(cls, audio_features):
@@ -56,7 +56,7 @@ class AudioFeatures(models.Model):
     def prepare_data_for_linegraph(cls, audio_features):
         graph_data = []
         # Foreach feature (acousticness, livness, valence,...)
-        features_attributes = [attr.lower() for attr in cls.featuresHeaders()[:-1]]
+        features_attributes = [attr.lower() for attr in cls.features_headers()[:-1]]
         for feature in features_attributes:
             # Add the title
             line = [feature]
@@ -71,7 +71,7 @@ class AudioFeatures(models.Model):
 
 
     @classmethod
-    def featuresHeaders(cls):
+    def features_headers(cls):
         return [
             "Acousticness",
             "Danceability",
@@ -83,7 +83,7 @@ class AudioFeatures(models.Model):
             "Tempo"
         ]
 
-    def asArray(self):
+    def as_array(self):
         return [
             self.acousticness,
             self.danceability,
@@ -152,7 +152,7 @@ class Analysis(models.Model):
     manager = models.Manager()
 
     @classmethod
-    def getUserHistory(cls, user, order=1):
+    def get_user_history(cls, user, order=1):
         """
         Get the full analysis history of a user
         """
@@ -166,16 +166,16 @@ class Analysis(models.Model):
         songs = [ana.songs for ana in analysis]
 
         # get the summarised audio features of each analysis
-        audioFeatures = [ana.summarised_audio_features for ana in analysis]
+        audio_features = [ana.summarised_audio_features for ana in analysis]
 
-        return analysis, songs, audioFeatures
+        return analysis, songs, audio_features
 
     @classmethod
-    def getUserSummarisedData(cls, user):
+    def get_user_summarised_data(cls, user):
         """
         Get a summary of all the analysis done for a user as an AudioFeatures
         """
-        analysis, songs, audioFeatures = Analysis.getUserHistory(user)
+        analysis, songs, audio_features = Analysis.get_user_history(user)
         if len(analysis) < 1:
             return None
 
@@ -184,7 +184,7 @@ class Analysis(models.Model):
         graph_headers.extend(ana.created.strftime('%d.%m.%Y') for ana in analysis)
         
         # Prepare the data
-        graph_data = AudioFeatures.prepare_data_for_linegraph(audioFeatures)
+        graph_data = AudioFeatures.prepare_data_for_linegraph(audio_features)
 
         # Join
         graph_data.insert(0, graph_headers)
@@ -193,7 +193,7 @@ class Analysis(models.Model):
         return graph_data
     
     @classmethod
-    def analyseSongsForUser(cls, songs):
+    def analyse_songs_for_user(cls, songs):
         """
         Analyse a list of songs for a user and return the summary
         """
@@ -203,7 +203,7 @@ class Analysis(models.Model):
         #[print(song.audio_features) for song in songs]
         return AudioFeatures.summarise([song.audio_features for song in songs])
 
-    def historyDataset(self):
+    def history_dataset(self):
         """
         Give an analysis as a dataset for history presentation
         """
