@@ -3,7 +3,6 @@ from urllib.parse import urlencode
 from social_django.utils import load_strategy
 from .models import Song, Artist, AudioFeatures, Album
 import requests
-import json
 
 class SpotifyRequestManager:
     """
@@ -26,6 +25,8 @@ class SpotifyRequestManager:
             "tracks" : "tracks?",
             "audio-features" : lambda track_id : "audio-features/" + track_id,
             "artist" : lambda artist_id : "artists/" + artist_id,
+            'artists': 'artists?',
+            "artist_top" : lambda artist_id : self.p_builder['artist'](artist_id) + "/top-tracks?",
             "search" : "search?",
         }
         # this is a dict that is used for the search in the Spotify API
@@ -51,11 +52,14 @@ class SpotifyRequestManager:
         It returns the response's text in a JSON encoded form
         """
         query = settings.SPOTIFY_BASE_URL + query_path
-        if(not(query_dict == None)):
+        if(query_dict != None):
             query += urlencode(query_dict)
-
         response = requests.get(query, params={'access_token' : self.social.extra_data['access_token']})
-        return json.loads(response.text)
+        
+        if(response.status_code != 200):
+            raise Exception("Bad request or API rate limit reached.")
+
+        return response.json()
 
     def get_songs(self, spotify_ids, album=None):
         """
@@ -120,18 +124,37 @@ class SpotifyRequestManager:
         The request_payload can be used to provide a previous request result that contains the data we need
         """
         artists = []
+        
+        if(request_payload == None):
+            query_dict = {}
+            query_dict['ids'] = ','.join(artist_ids)
+            request_payload = self.query_executor(self.p_builder['artists'], query_dict)['artists']
 
         for id, artist_payload in zip(artist_ids, request_payload):
             artist = Artist.get_artist(id)
             if(artist == None):
-                if(artist_payload == None):
-                    artist_payload = self.query_executor(self.p_builder['artist'](id))
                 artist = self.artists_factory(id, artist_payload)
             artists.append(artist)
         return artists
+    
+    def get_artist_top_songs(self, artist_id):
+        """
+        This method uses the artist_id given as parameter and gets its top songs
+        Builds and saves in the DB the artist and songs
+        """
+        artist = Artist.get_artist(artist_id)
+        if(artist == None):
+            artist = self.get_artists([artist_id])[0]
+        
+        # yeah it's static right now we have like 5 days before project is due
+        query_dict = {'country':'CH'}
+
+        response = self.query_executor(self.p_builder['artist_top'](artist_id), query_dict)
+        return self.get_songs([json_track['id'] for json_track in response['tracks']])
 
     def get_playlist(self):
         pass
+
 
     def search_item(self, query_item, item_types, limit=5):
         """

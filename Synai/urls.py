@@ -33,6 +33,8 @@ urlpatterns = [
     path('', include('django.contrib.auth.urls')),  # add logout route
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
+handler500 = "synaiapp.views.error_500"
+
 if settings.DEBUG:
     import debug_toolbar
     urlpatterns = [
