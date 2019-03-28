@@ -25,6 +25,9 @@ def request_manager_factory(request):
     manager = SpotifyRequestManager(social)
     return manager
 
+def error_500(request):
+    return render(request, "api_request_error.html", status=500)
+
 class SingleSongView(generic.TemplateView):
     model = Song
     template_name = "song_detail.html"
@@ -36,7 +39,7 @@ class SingleSongView(generic.TemplateView):
         if(song == None):
             print("Song does not exists... Going to the API")
             manager = request_manager_factory(self.request)
-            song = manager.get_song(song_id)
+            song = manager.get_songs([song_id])[0]
 
         context['song'] = song
         context['artists'] = song.artists.all()
@@ -86,7 +89,6 @@ class HistoryView(generic.TemplateView):
         # for graphs use
         context["analysis_dataset"] = dict(zip([analy.id for analy in analysis], [analy.asDataset() for analy in analysis]))
         return render(request, HistoryView.template_name, context)
-
 
 class DashboardView(generic.TemplateView):
     template_name = "dashboard.html"
