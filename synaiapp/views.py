@@ -8,6 +8,10 @@ from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from .services import SpotifyRequestManager
 
+# Logger & debug
+import logging
+logger = logging.getLogger(__name__)
+
 from .models import Song, AudioFeatures, Analysis, Album
 
 def home(request):
@@ -92,7 +96,7 @@ class HistoryView(generic.TemplateView):
         context["all_songs_len"] = len(songs)
 
         # for graphs use
-        context["analysis_dataset"] = dict(zip([analy.id for analy in analysis], [analy.asDataset() for analy in analysis]))
+        context["analysis_dataset"] = dict(zip([analy.id for analy in analysis], [analy.historyDataset() for analy in analysis]))
         return render(request, HistoryView.template_name, context)
 
 class DashboardView(generic.TemplateView):
@@ -100,10 +104,11 @@ class DashboardView(generic.TemplateView):
 
     @method_decorator(login_required)
     def get(self, request, *args, **kwargs):
-        context = {
-            "username": "username spotify",
-            "summary" : Analysis.getUserSummary(self.request.user)
-            }
+        context = super().get_context_data()
+
+        context["username"] = self.request.user.first_name
+        context["summarised_dataset"] = Analysis.getUserSummarisedData(self.request.user)
+
         return render(request, DashboardView.template_name, context)
 
 class SearchResultsView(generic.TemplateView):

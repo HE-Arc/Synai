@@ -7,30 +7,35 @@
             <h1>Dashboard</h1>
         </div>
         <div class="row justify-content-center">
-            <p>Hello {{ user.first_name }}</p>
-            <p>{% lorem %}</p>
+            <p>Hello {{ username }}</p>
         </div>
         <div class="row justify-content-center">
-            <p>Here's the summary of all the analysis you permformed</p>
-            <p>{% lorem %}</p>
+            <p>Here's the summary of all the analysis you permformed.</p>
         </div>
-        {% if summary == None %}
+        {% if summarised_dataset == None %}
         <div class="row justify-content-center">
             <p>Oh, it's seem you never used our song analyzer !</p>
         </div>
         {% else %}
         <div class="row justify-content-center">
-            <ul>
-                <li>Acousticness: {{summary.acousticness}}</li>
-                <li>Danceability: {{summary.danceability}}</li>
-                <li>Energy: {{summary.energy}}</li>
-                <li>Instrumentalness: {{summary.instrumentalness}}</li>
-                <li>Liveness: {{summary.liveness}}</li>
-                <li>Valence: {{summary.valence}}</li>
-                <li>Speechiness: {{summary.speechiness}}</li>
-                <li>Tempo: {{summary.tempo}}</li>
-            </ul>
+            <div id="graph" class="col-lg-12" style="height: 350px;"></div>
         </div>
         {% endif %}
     </div>
 {% endblock %}
+
+{% if summarised_dataset %}
+{% block js_dashboardgraph %}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/4.1.0/echarts-en.js" integrity="sha256-q4eNahhjrmTWF+LAesQ+rDagZhwcegBpS7qE0UAjJx4=" crossorigin="anonymous"></script>
+    <script src="{% static '/js/graph.js' %}"></script>
+    <script type="text/javascript">
+
+    let chart = new LinesChart('graph', {{ summarised_dataset |safe }}, 'LinesChart');
+
+    window.onresize = function()
+    {
+        chart.chart.resize();
+    };
+   </script>
+{% endblock %}
+{% endif %}

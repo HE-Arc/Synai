@@ -3,8 +3,9 @@ from django.contrib.auth.models import User
 from functools import reduce
 from django.utils import timezone
 import json
-import logging
 
+# Logger & debug
+import logging
 logger = logging.getLogger(__name__)
 
 class AudioFeatures(models.Model):
@@ -50,6 +51,24 @@ class AudioFeatures(models.Model):
         af.tempo = audio_features['tempo']
 
         return af
+
+    @classmethod
+    def prepare_data_for_linegraph(cls, audio_features):
+        graph_data = []
+        # Foreach feature (acousticness, livness, valence,...)
+        features_attributes = [attr.lower() for attr in cls.featuresHeaders()[:-1]]
+        for feature in features_attributes:
+            # Add the title
+            line = [feature]
+            
+            # Get the attrib value of each audio features
+            for af in audio_features:
+                value = getattr(af, feature, 0)
+                line.append(value)
+            # Add the line to the dataset
+            graph_data.append(line)
+        return graph_data
+
 
     @classmethod
     def featuresHeaders(cls):
@@ -143,22 +162,35 @@ class Analysis(models.Model):
         if order < 1:
             analysis = analysis.order_by('-created')
 
-        songs = [ana.songs for ana in analysis] # get all songs of the analysis
-        
-        # audioFeatures = [ ana.summarised_audio_features for ana in analysis]
-        audioFeatures = AudioFeatures.manager.all() 
+        # get all songs of the analysis
+        songs = [ana.songs for ana in analysis]
+
+        # get the summarised audio features of each analysis
+        audioFeatures = [ana.summarised_audio_features for ana in analysis]
+
         return analysis, songs, audioFeatures
 
     @classmethod
-    def getUserSummary(cls, user):
+    def getUserSummarisedData(cls, user):
         """
-        Get a summary of all the analysis done for a user
+        Get a summary of all the analysis done for a user as an AudioFeatures
         """
         analysis, songs, audioFeatures = Analysis.getUserHistory(user)
-        try:
-            return AudioFeatures.summarise(audioFeatures)
-        except:
+        if len(analysis) < 1:
             return None
+
+        # Prepare the header
+        graph_headers = ["Analysis"]
+        graph_headers.extend(ana.created.strftime('%d.%m.%Y') for ana in analysis)
+        
+        # Prepare the data
+        graph_data = AudioFeatures.prepare_data_for_linegraph(audioFeatures)
+
+        # Join
+        graph_data.insert(0, graph_headers)
+
+        # Return the dataset
+        return graph_data
     
     @classmethod
     def analyseSongsForUser(cls, songs):
@@ -171,32 +203,23 @@ class Analysis(models.Model):
         #[print(song.audio_features) for song in songs]
         return AudioFeatures.summarise([song.audio_features for song in songs])
 
-    def asDataset(self):
-        # Need to be optimized
-        features_headers = ["Feature"]
-        features_data = []
-       
-        
+    def historyDataset(self):
+        """
+        Give an analysis as a dataset for history presentation
+        """
+        # Get the datas
         songs = self.songs.select_related('audio_features').all()
         audio_features_of_songs = [song.audio_features for song in songs]
-        
-        # Foreach feature (acousticness, livness, valence,...)
-        features_attributes = [attr.lower() for attr in AudioFeatures.featuresHeaders()[:-1]]
-
-        for feature in features_attributes:
-            # Add the title
-            line = [feature]
-            logger.error("ola")
-
-            # Add the value of the audio_feature of each song
-            for af in audio_features_of_songs:
-                value = getattr(af, feature, 0)
-                line.append(value)
-
-            features_data.append(line) # add in the dataset
 
         # Create the first line of the header
+        features_headers = ["Feature"]
         features_headers.extend(song.name for song in songs)
+
+        # Prepare datas
+        features_data = AudioFeatures.prepare_data_for_linegraph(audio_features_of_songs)
+        
+        # Join
         features_data.insert(0, features_headers)
+
+        # Return the dataset
         return features_data
-    
