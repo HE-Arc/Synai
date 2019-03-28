@@ -25,6 +25,22 @@ a {
 
 /* Bootstrap */
 
+.custom_underline {
+  color: $dark-sweet-lime !important;
+  text-decoration: none !important;
+  outline: 0 !important;
+  border-bottom: solid 1px transparent !important;
+  -webkit-transition: color .2s ease-out, border-bottom-color .2s ease-out;
+     -moz-transition: color .2s ease-out, border-bottom-color .2s ease-out;
+      -ms-transition: color .2s ease-out, border-bottom-color .2s ease-out;
+       -o-transition: color .2s ease-out, border-bottom-color .2s ease-out;
+          transition: color .2s ease-out, border-bottom-color .2s ease-out;
+  &:hover {
+    color: $darker-sweet-lime !important;
+    border-bottom: solid 2px $darker-sweet-lime !important;
+  }
+}
+
 /* Navigation */
 
 .navbar {

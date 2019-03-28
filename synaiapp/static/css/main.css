@@ -18,6 +18,22 @@ a {
 }
 
 /* Bootstrap */
+.custom_underline {
+  color: #A9B700 !important;
+  text-decoration: none !important;
+  outline: 0 !important;
+  border-bottom: solid 1px transparent !important;
+  -webkit-transition: color 0.2s ease-out, border-bottom-color 0.2s ease-out;
+  -moz-transition: color 0.2s ease-out, border-bottom-color 0.2s ease-out;
+  -ms-transition: color 0.2s ease-out, border-bottom-color 0.2s ease-out;
+  -o-transition: color 0.2s ease-out, border-bottom-color 0.2s ease-out;
+  transition: color 0.2s ease-out, border-bottom-color 0.2s ease-out;
+}
+.custom_underline:hover {
+  color: #596700 !important;
+  border-bottom: solid 2px #596700 !important;
+}
+
 /* Navigation */
 .navbar {
   background-color: #F2E5D7;
