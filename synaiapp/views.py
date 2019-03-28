@@ -36,7 +36,7 @@ class SingleSongView(generic.TemplateView):
         if(song == None):
             print("Song does not exists... Going to the API")
             manager = request_manager_factory(self.request)
-            song = manager.get_song(song_id)
+            song = manager.get_songs([song_id])[0]
 
         context['song'] = song
         context['artists'] = song.artists.all()
@@ -55,8 +55,11 @@ class FeedView(generic.TemplateView):
         context = super().get_context_data(**kwargs)
         # add context data
         manager = request_manager_factory(request)
-        #manager.get_songs(['1yJzoX4xPsACzVxUarXRKa', '5ugCgHftDye3SLUM8tSVH0', '6tGtmVVS8ccFbJmewqhUTg', 'spotify:track:0CcQNd8CINkwQfe1RDtGV6'])
+        manager.get_songs(['1yJzoX4xPsACzVxUarXRKa', '5ugCgHftDye3SLUM8tSVH0', '6tGtmVVS8ccFbJmewqhUTg', 'spotify:track:0CcQNd8CINkwQfe1RDtGV6'])
         items = manager.search_item("Winged hussars", ["track", "artist", "album"], 5)
+
+        songs = manager.get_artist_top_songs('57ylwQTnFnIhJh4nu4rxCs')
+        [print(song.name) for song in songs]
 
         """for track in items['tracks']:
             print(track.name)
