@@ -107,7 +107,7 @@ class DashboardView(generic.TemplateView):
         return render(request, DashboardView.template_name, context)
 
 class SearchResultsView(generic.TemplateView):
-    template_name = "search_results.html"
+    template_name = "_items/search_results.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
