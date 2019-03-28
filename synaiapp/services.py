@@ -3,7 +3,6 @@ from urllib.parse import urlencode
 from social_django.utils import load_strategy
 from .models import Song, Artist, AudioFeatures, Album
 import requests
-import json
 
 class SpotifyRequestManager:
     """
@@ -56,6 +55,10 @@ class SpotifyRequestManager:
         if(query_dict != None):
             query += urlencode(query_dict)
         response = requests.get(query, params={'access_token' : self.social.extra_data['access_token']})
+        
+        if(response.status_code != 200):
+            raise Exception("Bad request or API rate limit reached.")
+
         return response.json()
 
     def get_songs(self, spotify_ids, album=None):

@@ -25,6 +25,9 @@ def request_manager_factory(request):
     manager  = SpotifyRequestManager(social)
     return manager
 
+def error_500(request):
+    return render(request, "api_request_error.html", status=500)
+
 class SingleSongView(generic.TemplateView):
     model = Song
     template_name = "song_detail.html"
@@ -101,7 +104,6 @@ class HistoryView(generic.TemplateView):
         context["songs"] = songs
         context["all_songs_len"] = len(songs)
         return render(request, HistoryView.template_name, context)
-
 
 class DashboardView(generic.TemplateView):
     template_name = "dashboard.html"
