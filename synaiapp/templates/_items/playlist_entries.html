@@ -1,13 +1,13 @@
 {% load static %}
 
 <div class="card-columns">
-    {% for playlist in user_playlist %}
+    {% for playlist in user_playlists %}
     <div class="card">
-        <img src="{% static 'note_icon.png' %}" class="card-img-top" alt="...">
+        <img src="{{ playlist.image_url }}" class="card-img-top" alt="playlist image of {{ playlist.name }}">
         <div class="card-body">
             <h5 class="card-title">{{ playlist.name }}</h5>
-            <p class="card-text">Playlist info like the number of songs, the total time, the subscribers number, etc.</p>
-            <p class="card-text"><small class="text-muted">Creation date of the playlist</small></p>
+            <p class="card-text">This playlist is owned by {{ playlist.owner }}.</p>
+            <p class="card-text"><small class="text-muted">contains {{ playlist.nb_tracks }} songs.</small></p>
         </div>
     </div>
     {% endfor %}

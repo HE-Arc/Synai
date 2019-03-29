@@ -166,13 +166,25 @@ class SpotifyRequestManager:
         return self.get_songs([json_track['id'] for json_track in response['tracks']])
 
 
+    @classmethod
+    def get_playlist_json_as_dict(cls, json_playlist):
+        return {
+            "id" : json_playlist['id'],
+            "image_url" : json_playlist['images'][0]['url'],
+            "name" : json_playlist['name'],
+            "owner" : json_playlist['owner']['display_name'],
+            "nb_tracks" : json_playlist['tracks']['total'],
+        }
+
+
     def get_user_playlists(self, user_id):
         """
         Get the user's playlist using its uid.
-        This method return a list of playlist id only
+        This method return a list of dictionnary of playlist
         """
         response = self.query_executor(self.user_builder['playlists'](user_id))
-        return [json_playlist['id'] for json_playlist in response['items']]
+        
+        return [SpotifyRequestManager.get_playlist_json_as_dict(json_playlist) for json_playlist in response['items']]
 
 
     def search_item(self, query_item, item_types, limit=5):

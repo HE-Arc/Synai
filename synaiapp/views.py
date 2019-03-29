@@ -6,6 +6,7 @@ from django.views.generic import ListView
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
+from social_django.models import UserSocialAuth
 
 # Services
 from .services import SpotifyRequestManager
@@ -64,13 +65,18 @@ class FeedView(generic.TemplateView):
     def get(self, request, *args, **kwargs):
         has_feed = False # TODO determine if has feed (using get param ?, form ?)
         context = super().get_context_data(**kwargs)
+        manager = request_manager_factory(request)
+        user_id = self.request.user.social_auth.get(provider="spotify").uid
+
+        # Playlists
+        context['user_playlists'] = manager.get_user_playlists(user_id)
+
         context['has_feed'] = has_feed
         if has_feed:
             # TODO add data if present
             pass
 
         # add context data
-        manager = request_manager_factory(request)
         songs = Song.objects.select_related('audio_features').all()
         audio_features = Analysis.analyse_songs_for_user(songs)
         context["audio_features"] = audio_features

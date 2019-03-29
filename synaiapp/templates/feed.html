@@ -25,7 +25,7 @@
         </div>
 
         <div class="row justify-content-center">
-            <div class="col-lg-6">
+            <div class="col-lg-12">
                 <div class="tab-content" id="pills-tabContent">
                     <div class="tab-pane fade show active" id="pills-search" role="tabpanel" aria-labelledby="pills-search-tab">
                         <form class="form-inline row justify-content-center" search-result-url="{% url "search_results" %}">
@@ -35,7 +35,12 @@
                         <div class="row justify-content-center" id="search-content"></div>
                     </div>
                     <div class="tab-pane fade" id="pills-playlist" role="tabpanel" aria-labelledby="pills-playlist-tab-tab">
-                        <p> {% lorem %} </p>
+                        {% if user_playlists %}
+                            {% include  "_items/playlist_entries.html" %}
+                        {% else %}
+                            <p>Oh, it's seems you havn't any playlists ! Create one and to analyse it.</p>
+                            <p>{{user}}</p>
+                        {% endif%}                        
                     </div>
                     <div class="tab-pane fade" id="pills-history" role="tabpanel" aria-labelledby="pills-history-tab-tab">
                         <p> {% lorem %} </p>
@@ -43,8 +48,6 @@
                 </div>
             </div>
         </div>
-
-        {% include  "_items/playlist_entries.html" %}
 
         {% if has_feed %}
         <div class="row justify-content-center">
