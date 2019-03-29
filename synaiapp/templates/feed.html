@@ -48,18 +48,7 @@
                 </div>
             </div>
         </div>
-
-        {% if has_feed %}
-        <div class="row justify-content-center">
-            <div id="graph" class="col-lg-12" style="height: 350px;"></div>
-        </div>
-        <div class="row justify-content-center">
-            <div id="graph3" class="col-lg-12" style="height: 400px;"></div>
-        </div>
-        <div class="row justify-content-center">
-            {% include  "_items/recommandations.html" %}
-        </div>
-        {% endif %}
+        <div id="analyse_results"></div>
     </div>
 {% endblock %}
 
@@ -84,15 +73,14 @@
 </script>
 {% endblock %}
 
-{% if has_feed %}
 {% block js_feedgraph %}
     <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/4.1.0/echarts-en.js" integrity="sha256-q4eNahhjrmTWF+LAesQ+rDagZhwcegBpS7qE0UAjJx4=" crossorigin="anonymous"></script>
     <script src="{% static '/js/graph.js' %}"></script>
     <script type="text/javascript">
 
     let charts = [];
-    charts.push(new BarChart('graph', {{ stats_headers|safe }}, {{ stats }}, 'BarChart'));
-    charts.push(new RadarChart('graph3', {{ stats_headers|safe }}, {{ stats }}, 'RadarChart'));
+    //charts.push(new BarChart('graph', {{ stats_headers|safe }}, {{ stats }}, 'BarChart'));
+    //charts.push(new RadarChart('graph3', {{ stats_headers|safe }}, {{ stats }}, 'RadarChart'));
 
     window.onresize = function()
     {
@@ -103,4 +91,3 @@
 
    </script>
 {% endblock %}
-{% endif %}

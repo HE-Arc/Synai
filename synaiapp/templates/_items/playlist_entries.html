@@ -1,8 +1,8 @@
 {% load static %}
 
-<div class="card-columns">
+<div class="card-columns" id="cards_playlist">
     {% for playlist in user_playlists %}
-    <div class="card">
+    <div class="card" onclick="analysePlaylist('{{playlist.id}}')">
         <img src="{{ playlist.image_url }}" class="card-img-top" alt="playlist image of {{ playlist.name }}">
         <div class="card-body">
             <h5 class="card-title">{{ playlist.name }}</h5>
@@ -12,3 +12,23 @@
     </div>
     {% endfor %}
 </div>
+
+{% block js_playlist %}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script type="text/javascript">
+function analysePlaylist(playlist_id) {
+    $.ajax({
+        url: "{% url 'analyse' %}",
+        type: 'GET',
+        data: {
+            'id': playlist_id,
+            'type' : 'playlist',
+        },
+        dataType: 'html',
+        success: function(data) {
+            $("#analyse_results").html(data);
+        }
+    });
+}
+</script>
+{% endblock %}

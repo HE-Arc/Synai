@@ -71,19 +71,8 @@ class FeedView(generic.TemplateView):
         # Playlists
         context['user_playlists'] = manager.get_user_playlists(user_id)
 
-        context['has_feed'] = has_feed
-        if has_feed:
-            # TODO add data if present
-            pass
-
         # add context data
-        songs = Song.objects.select_related('audio_features').all()
-        audio_features = Analysis.analyse_songs_for_user(songs)
-        context["audio_features"] = audio_features
-        context["stats"] = audio_features.as_array()
-        context["stats_headers"] = AudioFeatures.features_headers()
-        # Get correct recommandations
-        context["recommandations"] = Song.objects.all()[:10]
+        
         return render(request, FeedView.template_name, context)
 
 class HistoryView(generic.TemplateView):
@@ -122,10 +111,38 @@ class DashboardView(generic.TemplateView):
 class SearchResultsView(generic.TemplateView):
     template_name = "_items/search_results.html"
 
+    @method_decorator(login_required)
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         manager = request_manager_factory(self.request)
+
         search_input = self.request.GET.get('search_input')
+
         search_result = manager.search_item(search_input, ['track'])
+
         context['tracks'] = search_result['tracks']
+
+        return context
+
+class AnalyseResultsView(generic.TemplateView):
+    template_name = "_items/analyse_results.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        manager = request_manager_factory(self.request)
+
+        datasource_id = self.request.GET.get('id')
+        datasource_type = self.request.GET.get('type')
+
+        context['dt_id'] = datasource_id
+        context['dt_type'] = datasource_type
+
+        songs = Song.objects.select_related('audio_features').all()
+        audio_features = Analysis.analyse_songs_for_user(songs)
+        context["audio_features"] = audio_features
+        context["stats"] = audio_features.as_array()
+        context["stats_headers"] = AudioFeatures.features_headers()
+        # Get correct recommandations
+        context["recommandations"] = Song.objects.all()[:10]
+
         return context

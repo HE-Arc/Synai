@@ -60,8 +60,12 @@ class SpotifyRequestManager:
             query += urlencode(query_dict)
         response = requests.get(query, params={'access_token' : self.social.extra_data['access_token']})
         
+        if(response.status_code == 503):
+            raise Exception("Spotify API is temporarily unavailable. Please retry in a few minutes")
+        if(response.status_code == 429):
+            raise Exception("Spotify API rate limit reached. Check the \"Retry-After\" header to check how many seconds you have to wait.")
         if(response.status_code != 200):
-            raise Exception("Bad request or API rate limit reached.")
+            raise Exception("Something went wrong...")
 
         return response.json()
 
