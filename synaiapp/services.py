@@ -27,6 +27,7 @@ class SpotifyRequestManager:
             "artist" : lambda artist_id : "artists/" + artist_id,
             'artists': 'artists?',
             "artist_top" : lambda artist_id : self.p_builder['artist'](artist_id) + "/top-tracks?",
+            "playlist" : lambda playlist_id : "playlists/" + playlist_id + "/tracks",
             "search" : "search?",
         }
         # this is a dict that is used for the search in the Spotify API
@@ -36,6 +37,9 @@ class SpotifyRequestManager:
             "albums" : lambda r_data : [self.get_album(json['id']) for json in r_data['items']],
             "artists" : lambda r_data : self.get_artists([json['id'] for json in r_data['items']], r_data['items']),
             #"playlists" : get_playlist,
+        }
+        self.user_builder = {
+            "playlists" : lambda user_id : "users/" + user_id + "/playlists",
         }
 
     def refresh_access_token(self):
@@ -152,8 +156,23 @@ class SpotifyRequestManager:
         response = self.query_executor(self.p_builder['artist_top'](artist_id), query_dict)
         return self.get_songs([json_track['id'] for json_track in response['tracks']])
 
-    def get_playlist(self):
-        pass
+
+    def get_playlist(self, playlist_id):
+        """
+        Get the songs of a playlist using the playlist id.
+        Builds and saves in the DB the artists and songs
+        """
+        response = self.query_executor(self.p_builder['playlist'](playlist_id))
+        return self.get_songs([json_track['id'] for json_track in response['tracks']])
+
+
+    def get_user_playlists(self, user_id):
+        """
+        Get the user's playlist using its uid.
+        This method return a list of playlist id only
+        """
+        response = self.query_executor(self.user_builder['playlists'](user_id))
+        return [json_playlist['id'] for json_playlist in response['items']]
 
 
     def search_item(self, query_item, item_types, limit=5):
