@@ -1,5 +1,8 @@
 {% load static %}
-
+<div class="row justify-content-center">
+    <h2>Analysis Results</h2>
+    <p>We analysed your songs you've asked and here's what we can give you. The charts give you some statistics about your music. We also recommand you some new songs related to your actual tastes.</p>
+</div>
 <div class="row justify-content-center">
     <div id="graph" class="col-lg-12" style="height: 350px;"></div>
 </div>
@@ -7,9 +10,10 @@
     <div id="graph3" class="col-lg-12" style="height: 400px;"></div>
 </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/4.1.0/echarts-en.js" integrity="sha256-q4eNahhjrmTWF+LAesQ+rDagZhwcegBpS7qE0UAjJx4=" crossorigin="anonymous"></script>
 <script type="text/javascript">
+// WIP: Here to use easely access context data 
 charts.push(new BarChart('graph', {{ stats_headers|safe }}, {{ stats }}, 'BarChart'));
 charts.push(new RadarChart('graph3', {{ stats_headers|safe }}, {{ stats }}, 'RadarChart'));
 </script>
+
 {% include  "_items/recommandations.html" %}

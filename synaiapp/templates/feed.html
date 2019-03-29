@@ -77,11 +77,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/4.1.0/echarts-en.js" integrity="sha256-q4eNahhjrmTWF+LAesQ+rDagZhwcegBpS7qE0UAjJx4=" crossorigin="anonymous"></script>
     <script src="{% static '/js/graph.js' %}"></script>
     <script type="text/javascript">
-
+    
     let charts = [];
-    //charts.push(new BarChart('graph', {{ stats_headers|safe }}, {{ stats }}, 'BarChart'));
-    //charts.push(new RadarChart('graph3', {{ stats_headers|safe }}, {{ stats }}, 'RadarChart'));
-
     window.onresize = function()
     {
         charts.forEach(function (element) {

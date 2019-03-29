@@ -63,7 +63,6 @@ class FeedView(generic.TemplateView):
 
     @method_decorator(login_required)
     def get(self, request, *args, **kwargs):
-        has_feed = False # TODO determine if has feed (using get param ?, form ?)
         context = super().get_context_data(**kwargs)
         manager = request_manager_factory(request)
         user_id = self.request.user.social_auth.get(provider="spotify").uid
@@ -71,7 +70,8 @@ class FeedView(generic.TemplateView):
         # Playlists
         context['user_playlists'] = manager.get_user_playlists(user_id)
 
-        # add context data
+        # History
+        # TODO get user history (last 50 songs)
         
         return render(request, FeedView.template_name, context)
 
@@ -129,20 +129,20 @@ class AnalyseResultsView(generic.TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        manager = request_manager_factory(self.request)
 
         datasource_id = self.request.GET.get('id')
         datasource_type = self.request.GET.get('type')
 
-        context['dt_id'] = datasource_id
-        context['dt_type'] = datasource_type
-
+        # TODO Analyse songs of the playlist using item id and datasource
         songs = Song.objects.select_related('audio_features').all()
         audio_features = Analysis.analyse_songs_for_user(songs)
+
+        # For graph use
         context["audio_features"] = audio_features
         context["stats"] = audio_features.as_array()
         context["stats_headers"] = AudioFeatures.features_headers()
-        # Get correct recommandations
+
+        # TODO Get correct recommandations
         context["recommandations"] = Song.objects.all()[:10]
 
         return context
