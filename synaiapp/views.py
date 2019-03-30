@@ -80,7 +80,7 @@ class FeedView(generic.TemplateView):
         context['user_playlists'] = manager.get_user_playlists(user_id)
 
         # History
-        # TODO get user history (last 50 songs)
+        context['user_history'] = manager.get_current_user_history()
         
         return render(request, FeedView.template_name, context)
 
