@@ -127,9 +127,11 @@ class SearchResultsView(generic.TemplateView):
 
         search_input = self.request.GET.get('search_input')
 
-        search_result = manager.search_item(search_input, ['track'])
+        search_result = manager.search_item(search_input, ['track', 'album', 'artist'])
 
         context['tracks'] = search_result['tracks']
+        context['albums'] = search_result['albums']
+        context['artists'] = search_result['artists']
 
         return context
 
