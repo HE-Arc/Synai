@@ -2,6 +2,7 @@ from django.conf import settings
 from urllib.parse import urlencode
 from social_django.utils import load_strategy
 from .models import Song, Artist, AudioFeatures, Album
+import random
 import requests
 
 class SpotifyRequestManager:
@@ -25,10 +26,11 @@ class SpotifyRequestManager:
             "tracks" : "tracks?",
             "audio-features" : lambda track_id : "audio-features/" + track_id,
             "artist" : lambda artist_id : "artists/" + artist_id,
-            'artists': 'artists?',
+            "artists": "artists?",
             "artist_top" : lambda artist_id : self.p_builder['artist'](artist_id) + "/top-tracks?",
             "playlist" : lambda playlist_id : "playlists/" + playlist_id + "/tracks",
             "search" : "search?",
+            "recommendations" : "recommendations?",
             "user_playlists" : lambda user_id : "users/" + user_id + "/playlists",
             "current_user_history" : "me/player/recently-played"
         }
@@ -65,14 +67,16 @@ class SpotifyRequestManager:
             raise Exception("Spotify API rate limit reached. Check the \"Retry-After\" header to check how many seconds you have to wait.")
         if(response.status_code != 200):
             raise Exception(f"Something went wrong...\nError: {response.status_code}\nMessage: {response.text}")
-
+        
         return response.json()
 
-    def get_songs(self, spotify_ids, album=None):
+    def get_songs(self, spotify_ids, album=None, songs_payload=None):
         """
         This method checks in the DB if the songs (spotify_ids) exists. If not, it builds them and returns them
         """
-        # remove the part if you got the song whole URI 
+        # remove the None ids that can happen when we get an user's playlist with local songs for example
+        spotify_ids = filter(None, spotify_ids)
+
         spotify_ids = [id.split(':')[-1] for id in spotify_ids]
 
         songs = list(Song.objects.filter(spotify_id__in=spotify_ids))
@@ -192,6 +196,25 @@ class SpotifyRequestManager:
         
         return [SpotifyRequestManager.get_playlist_json_as_dict(json_playlist) for json_playlist in response['items']]
 
+    def get_recommendations(self, analysis):
+        songs = analysis.songs.all()
+        audio_features = analysis.summarised_audio_features
+        query_dict = {}
+        #cant use generator unfortunately for memory it would be better
+        track_seeds = random.sample([song.spotify_id for song in songs], settings.MAX_SEED_OBJECTS)
+
+        query_dict['seed_tracks'] = ','.join(track_seeds)
+        for attr in audio_features.features_headers()[:-1]:
+            attr_lower = attr.lower()
+            val = getattr(audio_features, attr_lower)
+            val_min = val - settings.FEATURES_DELTA
+            val_max = val + settings.FEATURES_DELTA
+            query_dict['min_' + attr_lower] = 0 if val_min < 0 else val_min
+            query_dict['max_' + attr_lower] = 1 if val_max > 1 else val_max 
+
+        recommended_tracks = self.query_executor(self.p_builder['recommendations'], query_dict)
+        songs = self.get_songs((track['id'] for track in recommended_tracks['tracks']))
+        return songs
 
     def get_current_user_history(self):
         """
