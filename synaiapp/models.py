@@ -152,6 +152,14 @@ class Analysis(models.Model):
     manager = models.Manager()
 
     @classmethod
+    def create(cls, songs, user, summarised_audio_features):
+        analysis = cls(user=user, summarised_audio_features=summarised_audio_features, songs_len=len(songs))
+        analysis.save()
+        for song in songs:
+            analysis.songs.add(song)
+        return analysis
+
+    @classmethod
     def get_user_history(cls, user, order=1):
         """
         Get the full analysis history of a user
@@ -193,15 +201,23 @@ class Analysis(models.Model):
         return graph_data
     
     @classmethod
-    def analyse_songs_for_user(cls, songs):
+    def analyse_songs_for_user(cls, songs, user):
         """
-        Analyse a list of songs for a user and return the summary
+        Analyse a list of songs for a user.
+        Return the analysis and the audio features
         """
-        # Doit être dans feedView !
-        #songs = self.songs.all().selected_related('audio_features').all()
-        #songs = list(Song.objects.filter(spotify_id__in=spotify_ids))
-        #[print(song.audio_features) for song in songs]
-        return AudioFeatures.summarise([song.audio_features for song in songs])
+        # Get the audio features
+        audio_features = [song.audio_features for song in songs]
+
+        # Create the analysis using the summarised audio feature
+        summarised_af = AudioFeatures.summarise(audio_features)
+        summarised_af.save()
+        
+        analysis = Analysis.create(songs, user, summarised_af)
+        analysis.save()
+        
+        # Return the analysis and the related audio features
+        return analysis, audio_features
 
     def history_dataset(self):
         """

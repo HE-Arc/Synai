@@ -65,7 +65,7 @@ class SpotifyRequestManager:
         if(response.status_code == 429):
             raise Exception("Spotify API rate limit reached. Check the \"Retry-After\" header to check how many seconds you have to wait.")
         if(response.status_code != 200):
-            raise Exception("Something went wrong...")
+            raise Exception(f"Something went wrong...\nError: {response.status_code}\nMessage: {response.text}")
 
         return response.json()
 

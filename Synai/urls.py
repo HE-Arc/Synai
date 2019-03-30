@@ -39,6 +39,7 @@ urlpatterns = [
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
 handler500 = "synaiapp.views.error_500"
+handler400 = "synaiapp.views.error_400"
 
 if settings.DEBUG:
     import debug_toolbar
