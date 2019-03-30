@@ -19,7 +19,7 @@
                     <a class="nav-link" id="pills-playlist-tab" data-toggle="pill" href="#pills-playlist" role="tab" aria-controls="pills-playlist" aria-selected="false">Playlist</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" id="pills-history-tab" data-toggle="pill" href="#pills-history" role="tab" aria-controls="pills-history" aria-selected="false">History</a>
+                    <a class="nav-link" id="pills-history-tab" data-toggle="pill" href="#pills-history" role="tab" aria-controls="pills-history" aria-selected="false" onclick="analyseHistory()">History</a>
                 </li>
             </ul>
         </div>
@@ -79,6 +79,21 @@
             $('#search_button').click();
         }
     });
+
+    // FOR HISTORY REQUEST //
+    function analyseHistory() {
+        $.ajax({
+            url: "{% url 'analyse' %}",
+            type: 'GET',
+            data: {
+                'type' : 'history',
+            },
+            dataType: 'html',
+            success: function(data) {
+                $("#analyse_results").html(data);
+            }
+        });
+    }
 </script>
 {% endblock %}
 

@@ -228,7 +228,7 @@ class SpotifyRequestManager:
 
     def get_current_user_history(self):
         """
-        Get the 50 recently played songs of the current user
+        Get the 20 recently played songs of the current user
         """
         response = self.query_executor(self.p_builder['current_user_history'])
         return self.get_songs([json_track['track']['id'] for json_track in response['items']])
