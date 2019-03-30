@@ -5,7 +5,18 @@
         {% for item in tracks %}
             <div class="row justify-content-center">
                 <div class="col-lg-6">
-                    <p>{{ item.name }}</p>
+                    <div class="card">
+                        <h5 class="card-header">{{ item.name }}</h5>
+                        <div class="card-body">
+                        <p class="card-text">
+                                {% for artist in item.artists.all %}
+                                    {{ artist.name }}
+                                {% endfor %}
+                        </p>
+                            <p class="card-text">{{ item.album.name }}</p>
+                            <a href="{% url 'song-detail' item.spotify_id %}" class="btn btn-primary">Details</a>
+                        </div>
+                    </div>
                 </div>
             </div>
         {% endfor %}

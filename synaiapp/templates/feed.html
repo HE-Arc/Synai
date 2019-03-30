@@ -56,19 +56,22 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 <script type="text/javascript">
     $("#search_button").click(function(){
-        var search_field_input = $("#search_field").val();
-        var form = $(this).closest("form");
-        $.ajax({
-            url: form.attr("search-result-url"),
-            type: 'GET',
-            data: {
-                'search_input': search_field_input
-            },
-            dataType: 'html',
-            success: function(data) {
-                $("#search-content").html(data);
-            }
-        });
+        let search_field_input = $("#search_field").val();
+        if (search_field_input){
+            let form = $(this).closest("form");
+            $.ajax({
+                url: form.attr("search-result-url"),
+                type: 'GET',
+                data: {
+                    'search_input': search_field_input
+                },
+                dataType: 'html',
+                success: function(data) {
+                    $("#search-content").html(data);
+                }
+            });
+        }
+
     });
 </script>
 {% endblock %}
