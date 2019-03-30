@@ -1,3 +1,5 @@
+from urllib import request
+
 from django.shortcuts import render
 from django.views import generic, View
 from django.views.generic import ListView
@@ -133,8 +135,10 @@ class AnalyseResultsView(generic.TemplateView):
         datasource_id = self.request.GET.get('id')
         datasource_type = self.request.GET.get('type')
 
+        manager = request_manager_factory(self.request)
         # TODO Analyse songs of the playlist using item id and datasource
-        songs = Song.objects.select_related('audio_features').all()
+        #songs = Song.objects.select_related('audio_features').all()
+        songs = manager.get_playlist(datasource_id)
         audio_features = Analysis.analyse_songs_for_user(songs)
 
         # For graph use

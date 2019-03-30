@@ -167,7 +167,7 @@ class SpotifyRequestManager:
         Builds and saves in the DB the artists and songs
         """
         response = self.query_executor(self.p_builder['playlist'](playlist_id))
-        return self.get_songs([json_track['id'] for json_track in response['tracks']])
+        return self.get_songs([json_track['track']['id'] for json_track in response['items']])
 
 
     @classmethod
