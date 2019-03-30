@@ -3,6 +3,7 @@
 
 <div class="container">
     {% if tracks %}
+        <h5>Tracks</h5>
         {% for item in tracks %}
             <div class="row justify-content-center">
                 <div class="col-lg-6">
@@ -16,6 +17,34 @@
                             </p>
                             <p class="card-text">Album: {{ item.album.name }}</p>
                             <a href="{% url 'song-detail' item.spotify_id %}" class="btn btn-primary">Details</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    {% endif %}
+    {% if artists %}
+        <h5>Artists</h5>
+        {% for item in artists %}
+            <div class="row justify-content-center">
+                <div class="col-lg-6">
+                    <div class="card">
+                        <h4 class="card-header">{{ item.name }}</h4>
+                        <div class="card-body">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    {% endif %}
+    {% if albums %}
+        <h5>Albums</h5>
+        {% for item in albums %}
+            <div class="row justify-content-center">
+                <div class="col-lg-6">
+                    <div class="card">
+                        <h4 class="card-header">{{ item.name }}</h4>
+                        <div class="card-body">
                         </div>
                     </div>
                 </div>
