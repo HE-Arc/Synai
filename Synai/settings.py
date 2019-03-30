@@ -146,6 +146,7 @@ SOCIAL_AUTH_URL_NAMESPACE = 'social'
 # Spotify
 
 SPOTIFY_BASE_URL = "https://api.spotify.com/v1/"
+MAX_REQ_IDS = 50
 SOCIAL_AUTH_SPOTIFY_KEY = os.environ.get('SPOTIFY_KEY', '')
 SOCIAL_AUTH_SPOTIFY_SECRET = os.environ.get('SPOTIFY_SECRET', '')
 SOCIAL_AUTH_SPOTIFY_SCOPE = ['user-read-email', 'user-library-read']

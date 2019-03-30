@@ -17,10 +17,10 @@ class SpotifyRequestManager:
     def __init__(self, social):
         self.social = social
         self.refresh_access_token()
+        
         self.p_builder = {
             "album" : lambda album_id : "albums/" + album_id,
-            #"album_tracks" : lambda album_id : "albums/" + album_id + "/tracks",
-            "album_tracks" : lambda album_id : self.p_builder['album'](album_id) + "/tracks", # this doesn't work unfortunately
+            "album_tracks" : lambda album_id : self.p_builder['album'](album_id) + "/tracks",
             "track" : lambda track_id : "tracks/" + track_id,
             "tracks" : "tracks?",
             "audio-features" : lambda track_id : "audio-features/" + track_id,
@@ -29,6 +29,7 @@ class SpotifyRequestManager:
             "artist_top" : lambda artist_id : self.p_builder['artist'](artist_id) + "/top-tracks?",
             "playlist" : lambda playlist_id : "playlists/" + playlist_id + "/tracks",
             "search" : "search?",
+            "user_playlists" : lambda user_id : "users/" + user_id + "/playlists",
         }
         # this is a dict that is used for the search in the Spotify API
         # it builds the list of items using the JSON and methods in the class
@@ -37,9 +38,6 @@ class SpotifyRequestManager:
             "albums" : lambda r_data : [self.get_album(json['id']) for json in r_data['items']],
             "artists" : lambda r_data : self.get_artists([json['id'] for json in r_data['items']], r_data['items']),
             #"playlists" : get_playlist,
-        }
-        self.user_builder = {
-            "playlists" : lambda user_id : "users/" + user_id + "/playlists",
         }
 
     def refresh_access_token(self):
@@ -81,13 +79,16 @@ class SpotifyRequestManager:
         missing_ids = list(set(spotify_ids) - set([song.spotify_id for song in songs]))
         # if we have missing ids we query the API
         if(len(missing_ids) != 0):
-            query_dict = {
-                'ids': ','.join(missing_ids)
-            }
-            response = self.query_executor(self.p_builder['tracks'], query_dict)
-            missing_songs = [self.song_factory(json_track) for json_track in response['tracks']]
-            # builds each track for each json slice in the api response
-            songs.extend(missing_songs)
+            # we subdivide the missing ids list into chunks because the API can give up to 50 tracks at the same time
+            sub_lists = [missing_ids[id:id+settings.MAX_REQ_IDS] for id in range(0, len(missing_ids), settings.MAX_REQ_IDS)]
+            for sub_list_ids in sub_lists:
+                query_dict = {
+                    'ids': ','.join(sub_list_ids)
+                }
+                response = self.query_executor(self.p_builder['tracks'], query_dict)
+                missing_songs = [self.song_factory(json_track) for json_track in response['tracks']]
+                # builds each track for each json slice in the api response
+                songs.extend(missing_songs)
 
         return songs
 
@@ -186,7 +187,7 @@ class SpotifyRequestManager:
         Get the user's playlist using its uid.
         This method return a list of dictionnary of playlist
         """
-        response = self.query_executor(self.user_builder['playlists'](user_id))
+        response = self.query_executor(self.p_builder['user_playlists'](user_id))
         
         return [SpotifyRequestManager.get_playlist_json_as_dict(json_playlist) for json_playlist in response['items']]
 
