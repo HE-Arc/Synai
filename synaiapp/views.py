@@ -1,3 +1,5 @@
+from urllib import request
+
 from django.shortcuts import render
 from django.views import generic, View
 from django.views.generic import ListView
@@ -115,10 +117,10 @@ class DashboardView(generic.TemplateView):
 
         return render(request, DashboardView.template_name, context)
 
+@method_decorator(login_required, name='dispatch')
 class SearchResultsView(generic.TemplateView):
     template_name = "_items/search_results.html"
 
-    @method_decorator(login_required)
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         manager = request_manager_factory(self.request)
