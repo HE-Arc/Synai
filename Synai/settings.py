@@ -151,7 +151,13 @@ FEATURES_DELTA = 0.3
 MAX_SEED_OBJECTS = 5
 SOCIAL_AUTH_SPOTIFY_KEY = os.environ.get('SPOTIFY_KEY', '')
 SOCIAL_AUTH_SPOTIFY_SECRET = os.environ.get('SPOTIFY_SECRET', '')
-SOCIAL_AUTH_SPOTIFY_SCOPE = ['user-read-email', 'user-library-read']
+SOCIAL_AUTH_SPOTIFY_SCOPE = [
+    'user-read-email',
+    'user-library-read',
+    'user-read-recently-played',
+    'playlist-read-private',
+    'playlist-read-collaborative',
+    ]
 
 
 # Internationalization

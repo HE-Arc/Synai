@@ -32,6 +32,7 @@ class SpotifyRequestManager:
             "search" : "search?",
             "recommendations" : "recommendations?",
             "user_playlists" : lambda user_id : "users/" + user_id + "/playlists",
+            "current_user_history" : "me/player/recently-played"
         }
         # this is a dict that is used for the search in the Spotify API
         # it builds the list of items using the JSON and methods in the class
@@ -215,6 +216,14 @@ class SpotifyRequestManager:
         recommended_tracks = self.query_executor(self.p_builder['recommendations'], query_dict)
         songs = self.get_songs((track['id'] for track in recommended_tracks['tracks']))
         return songs
+
+    def get_current_user_history(self):
+        """
+        Get the 50 recently played songs of the current user
+        """
+        response = self.query_executor(self.p_builder['current_user_history'])
+        return self.get_songs([json_track['track']['id'] for json_track in response['items']])
+
 
     def search_item(self, query_item, item_types, limit=5):
         """
