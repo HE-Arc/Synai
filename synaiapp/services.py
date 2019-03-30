@@ -57,7 +57,9 @@ class SpotifyRequestManager:
         It returns the response's text in a JSON encoded form
         """
         query = settings.SPOTIFY_BASE_URL + query_path
+
         if(query_dict != None):
+            query += '?' if query[-1:] != '?' else ''
             query += urlencode(query_dict)
         response = requests.get(query, params={'access_token' : self.social.extra_data['access_token']})
         
@@ -187,16 +189,22 @@ class SpotifyRequestManager:
         }
 
 
-    def get_user_playlists(self, user_id):
+    def get_user_playlists(self, user_id, limit=20):
         """
         Get the user's playlist using its uid.
         This method return a list of dictionnary of playlist
         """
-        response = self.query_executor(self.p_builder['user_playlists'](user_id))
-        
+        query_dict = {
+            'limit': 50
+        }
+        response = self.query_executor(self.p_builder['user_playlists'](user_id), query_dict)
         return [SpotifyRequestManager.get_playlist_json_as_dict(json_playlist) for json_playlist in response['items']]
 
-    def get_recommendations(self, analysis):
+    def get_recommendations(self, analysis, limit=10):
+        """
+        This method returns songs (10 by default) recommended by the API given some parameters
+        It uses the analysed features and songs as seed to get them
+        """
         songs = analysis.songs.all()
         audio_features = analysis.summarised_audio_features
         query_dict = {}
@@ -211,6 +219,8 @@ class SpotifyRequestManager:
             val_max = val + settings.FEATURES_DELTA
             query_dict['min_' + attr_lower] = 0 if val_min < 0 else val_min
             query_dict['max_' + attr_lower] = 1 if val_max > 1 else val_max 
+
+        query_dict['limit'] = limit
 
         recommended_tracks = self.query_executor(self.p_builder['recommendations'], query_dict)
         songs = self.get_songs((track['id'] for track in recommended_tracks['tracks']))
