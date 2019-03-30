@@ -142,6 +142,26 @@ class Song(models.Model):
         song = cls(spotify_id = song_id, name=name, audio_features=audio_features, album = album)
         return song
 
+    @classmethod
+    def get_songs_with_artists_and_album_names(cls, songs):
+        """
+        Return a dataset of song, their artist names and album name
+        """
+        songs_name = []
+        artists_names = []
+        album_names = []
+        for song in songs:
+            # song.prefetch_related('artists').select_related('album')
+            songs_name.append(song.name)
+            line = ""
+            for artist in song.artists.all():
+                line += (artist.name + " ")
+            artists_names.append(line)
+            album_names.append(song.album.name)
+
+        songs_dataset = zip(songs_name, artists_names, album_names)
+        return songs_dataset
+
 class Analysis(models.Model):
     songs = models.ManyToManyField(Song)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
