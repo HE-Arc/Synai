@@ -65,7 +65,7 @@ class SpotifyRequestManager:
         if(response.status_code == 429):
             raise Exception("Spotify API rate limit reached. Check the \"Retry-After\" header to check how many seconds you have to wait.")
         if(response.status_code != 200):
-            raise Exception("Something went wrong...")
+            raise Exception(f"Something went wrong...\nError: {response.status_code}\nMessage: {response.text}")
 
         return response.json()
 
@@ -167,7 +167,7 @@ class SpotifyRequestManager:
         Builds and saves in the DB the artists and songs
         """
         response = self.query_executor(self.p_builder['playlist'](playlist_id))
-        return self.get_songs([json_track['id'] for json_track in response['tracks']])
+        return self.get_songs([json_track['track']['id'] for json_track in response['items']])
 
 
     @classmethod

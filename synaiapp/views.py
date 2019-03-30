@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.views import generic, View
 from django.views.generic import ListView
+from rest_framework.exceptions import ValidationError
 
 # User manipulation
 from django.contrib.auth.models import User
@@ -10,6 +11,9 @@ from social_django.models import UserSocialAuth
 
 # Services
 from .services import SpotifyRequestManager
+
+# Python utils
+import re
 
 # Logger & debug
 import logging
@@ -33,7 +37,10 @@ def request_manager_factory(request):
     return manager
 
 def error_500(request):
-    return render(request, "api_request_error.html", status=500)
+    return render(request, "api_request_error_500.html", status=500)
+
+def error_400(request):
+    return render(request, "api_request_error_400.html", status=400)
 
 class SingleSongView(generic.TemplateView):
     model = Song
@@ -44,7 +51,7 @@ class SingleSongView(generic.TemplateView):
         song_id = self.kwargs['id']
         song = Song.get_song(song_id)
         if(song == None):
-            print("Song does not exists... Going to the API")
+            print("Song does not exists in the DB... Going to the API")
             manager = request_manager_factory(self.request)
             song = manager.get_songs([song_id])[0]
 
@@ -129,17 +136,32 @@ class AnalyseResultsView(generic.TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        manager = request_manager_factory(self.request)
+
+        self.request_type = {
+            'song': lambda song_id: manager.get_songs([song_id]),
+            'playlist': lambda playlist_id: manager.get_playlist(playlist_id),
+            'artist': lambda artist_id: manager.get_artist_top_songs(artist_id),
+        }
 
         datasource_id = self.request.GET.get('id')
         datasource_type = self.request.GET.get('type')
 
-        # TODO Analyse songs of the playlist using item id and datasource
-        songs = Song.objects.select_related('audio_features').all()
-        audio_features = Analysis.analyse_songs_for_user(songs)
+        # Verify ID integrity (15-30 char in base 62)
+        match = re.match('[a-zA-Z0-9]{15,30}',datasource_id)
+        if match is None:
+            raise ValidationError
+
+        # Analyse songs of the playlist using item id and datasource
+        try: 
+            songs = self.request_type[datasource_type](datasource_id)
+        except KeyError:
+            raise ValidationError
+        analysis, audio_features = Analysis.analyse_songs_for_user(songs, self.request.user)
 
         # For graph use
         context["audio_features"] = audio_features
-        context["stats"] = audio_features.as_array()
+        context["stats"] = analysis.summarised_audio_features.as_array()
         context["stats_headers"] = AudioFeatures.features_headers()
 
         # TODO Get correct recommandations

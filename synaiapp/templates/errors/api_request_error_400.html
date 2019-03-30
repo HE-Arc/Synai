@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Error{% endblock %}
+{% block content %}
+<div class="container-fluid">
+    <div class="row justify-content-center">
+        <h1 class="display-4">There was an error. Sorry it happened.</h1>
+    </div>
+    <div class="row justify-content-center">
+        <p class="display-5">You probably request us a wrong data. So we can't give it to you... And we can't understand you neither.</p>
+    </div>
+    <div class="row justify-content-center">
+        <p class="display-5">Please, reformulate your request ! We really want to give you what we have !</p>
+    </div>
+    <div class="row justify-content-center img-wrapper">
+        <img src="{% static 'error_400.png' %}" class="img-fluid" alt="even the image didn't work"/>
+    </div>
+    <div class="row justify-content-center">
+        <h2 class="text-muted">You just lost the game</h2>    
+    </div>
+</div>
+{% endblock %}
