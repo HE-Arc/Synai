@@ -169,6 +169,6 @@ class AnalyseResultsView(generic.TemplateView):
         context["stats_headers"] = AudioFeatures.features_headers()
 
         # TODO Get correct recommandations
-        context["recommandations"] = Song.objects.all()[:10]
+        context["recommandations"] = manager.get_recommendations(analysis)
 
         return context

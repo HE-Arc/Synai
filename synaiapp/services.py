@@ -192,10 +192,9 @@ class SpotifyRequestManager:
         This method return a list of dictionnary of playlist
         """
         response = self.query_executor(self.p_builder['user_playlists'](user_id))
-        
         return [SpotifyRequestManager.get_playlist_json_as_dict(json_playlist) for json_playlist in response['items']]
 
-    def get_recommendations(self, analysis):
+    def get_recommendations(self, analysis, limit=10):
         songs = analysis.songs.all()
         audio_features = analysis.summarised_audio_features
         query_dict = {}
@@ -210,6 +209,8 @@ class SpotifyRequestManager:
             val_max = val + settings.FEATURES_DELTA
             query_dict['min_' + attr_lower] = 0 if val_min < 0 else val_min
             query_dict['max_' + attr_lower] = 1 if val_max > 1 else val_max 
+
+        query_dict['limit'] = limit
 
         recommended_tracks = self.query_executor(self.p_builder['recommendations'], query_dict)
         songs = self.get_songs((track['id'] for track in recommended_tracks['tracks']))
