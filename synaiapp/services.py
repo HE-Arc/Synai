@@ -57,7 +57,9 @@ class SpotifyRequestManager:
         It returns the response's text in a JSON encoded form
         """
         query = settings.SPOTIFY_BASE_URL + query_path
+
         if(query_dict != None):
+            query += '?' if query[-1:] != '?' else ''
             query += urlencode(query_dict)
         response = requests.get(query, params={'access_token' : self.social.extra_data['access_token']})
         
@@ -187,15 +189,22 @@ class SpotifyRequestManager:
         }
 
 
-    def get_user_playlists(self, user_id):
+    def get_user_playlists(self, user_id, limit=20):
         """
         Get the user's playlist using its uid.
         This method return a list of dictionnary of playlist
         """
-        response = self.query_executor(self.p_builder['user_playlists'](user_id))
+        query_dict = {
+            'limit': 50
+        }
+        response = self.query_executor(self.p_builder['user_playlists'](user_id), query_dict)
         return [SpotifyRequestManager.get_playlist_json_as_dict(json_playlist) for json_playlist in response['items']]
 
     def get_recommendations(self, analysis, limit=10):
+        """
+        This method returns songs (10 by default) recommended by the API given some parameters
+        It uses the analysed features and songs as seed to get them
+        """
         songs = analysis.songs.all()
         audio_features = analysis.summarised_audio_features
         query_dict = {}
