@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from functools import reduce
 from django.utils import timezone
+from django.db.models import prefetch_related_objects
 import json
 
 # Logger & debug
@@ -151,9 +152,11 @@ class Song(models.Model):
         artists_names = []
         album_names = []
 
+        # gets the artists on an already fetched queryset
+        prefetch_related_objects(songs, 'artists', 'album')
+        albums = Album.objects.filter(spotify_id__in=(song.id for song in songs))
 
         for song in songs:
-            # song.prefetch_related('artists').select_related('album')
             songs_name.append(song.name)
             line = ""
             for artist in song.artists.all():
