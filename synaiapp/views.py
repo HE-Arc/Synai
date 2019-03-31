@@ -167,7 +167,7 @@ class AnalyseResultsView(generic.TemplateView):
                 raise ValidationError
 
         # Analyse the songs ! 
-        analysis, audio_features = Analysis.analyse_songs_for_user(songs, self.request.user)
+        analysis, audio_features = Analysis.analyse_songs_for_user(songs, self.request.user, datasource_type)
 
         # For graph use
         context["audio_features"] = audio_features

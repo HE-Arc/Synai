@@ -172,13 +172,14 @@ class Analysis(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     summarised_audio_features = models.ForeignKey(AudioFeatures, on_delete=models.CASCADE)
     songs_len = models.IntegerField()
+    datasource_type = models.CharField(max_length=30, default="unknown")
     created = models.DateTimeField(default=timezone.now)
 
     manager = models.Manager()
 
     @classmethod
-    def create(cls, songs, user, summarised_audio_features):
-        analysis = cls(user=user, summarised_audio_features=summarised_audio_features, songs_len=len(songs))
+    def create(cls, songs, user, summarised_audio_features, datasource_type):
+        analysis = cls(user=user, summarised_audio_features=summarised_audio_features, songs_len=len(songs), datasource_type=datasource_type)
         analysis.save()
         for song in songs:
             analysis.songs.add(song)
@@ -271,7 +272,7 @@ class Analysis(models.Model):
 
     
     @classmethod
-    def analyse_songs_for_user(cls, songs, user):
+    def analyse_songs_for_user(cls, songs, user, datasource_type):
         """
         Analyse a list of songs for a user.
         Return the analysis and the audio features
@@ -283,7 +284,7 @@ class Analysis(models.Model):
         summarised_af = AudioFeatures.summarise(audio_features)
         summarised_af.save()
         
-        analysis = Analysis.create(songs, user, summarised_af)
+        analysis = Analysis.create(songs, user, summarised_af, datasource_type)
         analysis.save()
         
         # Return the analysis and the related audio features
