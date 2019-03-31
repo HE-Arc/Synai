@@ -37,7 +37,7 @@ class AudioFeatures(models.Model):
     
     @classmethod
     def mean(cls, attribute, audio_features_list):
-        return reduce(lambda a, b: a+b, [getattr(x, attribute, 0) for x in audio_features_list]) /len(audio_features_list)
+        return round(reduce(lambda a, b: a+b, [getattr(x, attribute, 0) for x in audio_features_list]) /len(audio_features_list), 2)
     
     @classmethod
     def create(cls, audio_features):

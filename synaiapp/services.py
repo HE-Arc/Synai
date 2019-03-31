@@ -25,6 +25,7 @@ class SpotifyRequestManager:
             "track" : lambda track_id : "tracks/" + track_id,
             "tracks" : "tracks?",
             "audio-features" : lambda track_id : "audio-features/" + track_id,
+            "audio-features-multiple" : "audio-features?",
             "artist" : lambda artist_id : "artists/" + artist_id,
             "artists": "artists?",
             "artist_top" : lambda artist_id : self.p_builder['artist'](artist_id) + "/top-tracks?",
@@ -58,9 +59,14 @@ class SpotifyRequestManager:
         """
         query = settings.SPOTIFY_BASE_URL + query_path
 
+
         if(query_dict != None):
             query += '?' if query[-1:] != '?' else ''
             query += urlencode(query_dict)
+
+        if(settings.DEBUG):
+            print("Querying " + query)
+
         response = requests.get(query, params={'access_token' : self.social.extra_data['access_token']})
         
         if(response.status_code == 503):
@@ -93,8 +99,15 @@ class SpotifyRequestManager:
                     'ids': ','.join(sub_list_ids)
                 }
                 response = self.query_executor(self.p_builder['tracks'], query_dict)
-                missing_songs = [self.song_factory(json_track) for json_track in response['tracks']]
+
+                # request the audio features for every song we got, we can use the same query dict for the songs ids as well
+                audio_features_response = self.query_executor(self.p_builder['audio-features-multiple'], query_dict)
+
                 # builds each track for each json slice in the api response
+                missing_songs = [self.song_factory(json_track, json_features) for 
+                    json_track, json_features in zip(response['tracks'], audio_features_response['audio_features'])
+                ]
+
                 songs.extend(missing_songs)
 
         return songs
@@ -255,7 +268,7 @@ class SpotifyRequestManager:
 
         return items
 
-    def song_factory(self, json_response, album=None):
+    def song_factory(self, json_response, json_features=None, album=None):
         """
         This method is a helper ""factory"" to build a song
         It will request the audio features and check if artists exist in the DB already, if not build them and save them into the DB
@@ -265,7 +278,11 @@ class SpotifyRequestManager:
         artists = self.get_artists(artist_ids, json_response['artists'])
         if(album == None):
             album = self.get_album(json_response['album']['id'], json_response['album'])
-        audio_features = self.get_audio_features(json_response['id'])
+
+        if(json_features == None):
+            audio_features = self.get_audio_features(json_response['id'])
+        else:
+            audio_features = self.audio_features_factory(json_features)
         
         song = Song.create(json_response['id'], json_response['name'], audio_features, album)
         song.save()
