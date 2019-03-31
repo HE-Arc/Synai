@@ -189,7 +189,7 @@ class Analysis(models.Model):
         """
         Get the full analysis history of a user
         """
-        analysis = Analysis.manager.filter(user=user).prefetch_related('songs').select_related('summarised_audio_features')
+        analysis = Analysis.manager.filter(user=user).prefetch_related('songs__audio_features').select_related('summarised_audio_features')
         
         # yeah lazy load that analysis
         if order < 1:
@@ -244,12 +244,12 @@ class Analysis(models.Model):
         # Return the analysis and the related audio features
         return analysis, audio_features
 
-    def history_dataset(self):
+    def history_dataset(self, songs):
         """
         Give an analysis as a dataset for history presentation
         """
         # Get the datas
-        songs = self.songs.select_related('audio_features').all()
+        #songs = self.songs.select_related('audio_features').all()
         audio_features_of_songs = [song.audio_features for song in songs]
 
         # Create the first line of the header

@@ -103,7 +103,7 @@ class HistoryView(generic.TemplateView):
         context["all_songs_len"] = len(songs)
 
         # for graphs use
-        context["analysis_dataset"] = dict(zip([analy.id for analy in analysis], [analy.history_dataset() for analy in analysis]))
+        context["analysis_dataset"] = dict(zip([analy.id for analy in analysis], [analy.history_dataset(analy.songs.all()) for analy in analysis]))
         return render(request, HistoryView.template_name, context)
 
 class DashboardView(generic.TemplateView):
