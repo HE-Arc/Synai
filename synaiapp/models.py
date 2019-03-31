@@ -214,16 +214,61 @@ class Analysis(models.Model):
 
         # Prepare the header
         graph_headers = ["Analysis"]
-        graph_headers.extend(ana.created.strftime('%d.%m.%Y') for ana in analysis)
-        
-        # Prepare the data
-        graph_data = AudioFeatures.prepare_data_for_linegraph(audio_features)
 
+        # Summarize the analysis of the same day
+        af_to_prepare = []
+        
+        # Add the first analysis
+        af_to_summarize = [audio_features[0]]
+        graph_headers.append(analysis[0].created.strftime('%d.%m.%Y'))
+
+        # For all the other analysis
+        for i in range(1, len(analysis)):
+
+            # If the date are diffrent
+            date_str = analysis[i].created.strftime('%d.%m.%Y')
+            if graph_headers[-1] != date_str:
+
+                # Summarize the af if there is more than one in the list
+                if len(af_to_summarize) > 1 :
+                    summarised_af = AudioFeatures.summarise(af_to_summarize)
+                else:
+                    summarised_af = af_to_summarize[0]
+
+                # Add the date in headers
+                graph_headers.append(date_str)
+
+                # Add the summarize af in the "to prepare" list
+                af_to_prepare.append(summarised_af)
+
+                # Create the new list
+                af_to_summarize = [audio_features[i]]
+
+            # Else the date are the same
+            else:
+                # And add the current analysis to the af list to summarize
+                af_to_summarize.append(audio_features[i])
+
+        # Summarize the last using the same test as above
+
+        if len(af_to_summarize) > 1 :
+            summarised_af = AudioFeatures.summarise(af_to_summarize)
+        else:
+            summarised_af = af_to_summarize[0]
+
+        # And add it to the lists
+        graph_headers.append(date_str)
+        af_to_prepare.append(summarised_af)
+
+        # Prepare the data
+        graph_data = AudioFeatures.prepare_data_for_linegraph(af_to_prepare)
+        
         # Join
         graph_data.insert(0, graph_headers)
 
         # Return the dataset
         return graph_data
+
     
     @classmethod
     def analyse_songs_for_user(cls, songs, user):
