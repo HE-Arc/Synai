@@ -17,14 +17,14 @@
         <div class="">
             <p>Here's the average statistics:</p>
             <ul>
-                <li>Acousticness: {{analys.summarised_audio_features.acousticness}}</li>
-                <li>Danceability: {{analys.summarised_audio_features.danceability}}</li>
-                <li>Energy: {{analys.summarised_audio_features.energy}}</li>
-                <li>Instrumentalness: {{analys.summarised_audio_features.instrumentalness}}</li>
-                <li>Liveness: {{analys.summarised_audio_features.liveness}}</li>
-                <li>Valence: {{analys.summarised_audio_features.valence}}</li>
-                <li>Speechiness: {{analys.summarised_audio_features.speechiness}}</li>
-                <li>Tempo: {{analys.summarised_audio_features.tempo}}</li>
+                <li>Acousticness: {{analys.summarised_audio_features.acousticness|floatformat:2}}</li>
+                <li>Danceability: {{analys.summarised_audio_features.danceability|floatformat:2}}</li>
+                <li>Energy: {{analys.summarised_audio_features.energy|floatformat:2}}</li>
+                <li>Instrumentalness: {{analys.summarised_audio_features.instrumentalness|floatformat:2}}</li>
+                <li>Liveness: {{analys.summarised_audio_features.liveness|floatformat:3}}</li>
+                <li>Valence: {{analys.summarised_audio_features.valence|floatformat:2}}</li>
+                <li>Speechiness: {{analys.summarised_audio_features.speechiness|floatformat:2}}</li>
+                <li>Tempo: {{analys.summarised_audio_features.tempo|floatformat}}</li>
             </ul>
         </div>
         <div class="" id="graph{{ analys.id }}" style="height: 350px;"></div>
