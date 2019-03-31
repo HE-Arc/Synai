@@ -21,10 +21,11 @@ class SpotifyRequestManager:
         
         self.p_builder = {
             "album" : lambda album_id : "albums/" + album_id,
+            "albums" : "albums?",
             "album_tracks" : lambda album_id : self.p_builder['album'](album_id) + "/tracks",
             "track" : lambda track_id : "tracks/" + track_id,
             "tracks" : "tracks?",
-            "audio-features" : lambda track_id : "audio-features/" + track_id,
+            "audio-features" : "audio-features?",
             "artist" : lambda artist_id : "artists/" + artist_id,
             "artists": "artists?",
             "artist_top" : lambda artist_id : self.p_builder['artist'](artist_id) + "/top-tracks?",
@@ -93,34 +94,45 @@ class SpotifyRequestManager:
                     'ids': ','.join(sub_list_ids)
                 }
                 response = self.query_executor(self.p_builder['tracks'], query_dict)
-                missing_songs = [self.song_factory(json_track) for json_track in response['tracks']]
-                # builds each track for each json slice in the api response
+
+                #build the missing songs using only the JSON payload
+                missing_songs = self.songs_factory(response['tracks'])
                 songs.extend(missing_songs)
 
         return songs
 
-    def get_audio_features(self, song_id):
+    def get_audio_features(self, songs_ids):
         """
         This method should be called as you request a song to the API
         It requests the audio features such as acousticness, danceability, etc. to the API
         The audio features object will then be built and returned
         Given the spotify unique ID (song_id)
         """
-        response = self.query_executor(self.p_builder['audio-features'](song_id))
+        query_dict = {
+            "ids" : ','.join(songs_ids)
+        }
+        response = self.query_executor(self.p_builder['audio-features'], query_dict)
         audio_features = self.audio_features_factory(response)
         return audio_features
 
-    def get_album(self, album_id, request_payload=None):
+    def get_albums(self, album_ids, request_payload=None):
         """
         This method checks in the DB if a specific album (album_id) exists. If not, it builds it and returns it
         You can specify data in a JSON form for a previous request to prevent multiple API acesses for no reason
         """
-        album = Album.get_album(album_id)
-        if(album == None):
+        albums = list(Album.objects.filter(spotify_id__in=album_ids))
+        missing_ids = list(set(album_ids) - set([album.spotify_id for album in albums]))
+
+        if(len(missing_ids) != 0):
             if(request_payload == None):
-                request_payload = self.query_executor(self.p_builder['album'](album_id))
-            album = self.album_factory(request_payload)
-        return album
+                query_dict = {}
+                query_dict['ids'] = ','.join(missing_ids)
+                request_payload = self.query_executor(self.p_builder['albums'], query_dict)['albums']
+
+            missing_albums = self.albums_factory(missing_ids, request_payload)
+            albums.extend(missing_albums)
+
+        return albums
 
     def get_album_tracks(self, album_id):
         """
@@ -139,18 +151,19 @@ class SpotifyRequestManager:
         If they don't they are queried to the API
         The request_payload can be used to provide a previous request result that contains the data we need
         """
-        artists = []
+        artists = list(Artist.objects.filter(spotify_id__in=artist_ids))
+        print("Len1", len(artists))
+        missing_ids = list(set(artist_ids) - set([artist.spotify_id for artist in artists]))
+        print(salut)
+        if(len(missing_ids) != 0):
+            if(request_payload == None):
+                query_dict = {}
+                query_dict['ids'] = ','.join(missing_ids)
+                request_payload = self.query_executor(self.p_builder['artists'], query_dict)['artists']
         
-        if(request_payload == None):
-            query_dict = {}
-            query_dict['ids'] = ','.join(artist_ids)
-            request_payload = self.query_executor(self.p_builder['artists'], query_dict)['artists']
+            artists.extend(self.artists_factory(missing_ids, request_payload))
 
-        for id, artist_payload in zip(artist_ids, request_payload):
-            artist = Artist.get_artist(id)
-            if(artist == None):
-                artist = self.artists_factory(id, artist_payload)
-            artists.append(artist)
+        print("Len", len(artists))
         return artists
     
     def get_artist_top_songs(self, artist_id):
@@ -255,51 +268,88 @@ class SpotifyRequestManager:
 
         return items
 
-    def song_factory(self, json_response, album=None):
+    def songs_factory(self, json_response, album=None):
         """
         This method is a helper ""factory"" to build a song
         It will request the audio features and check if artists exist in the DB already, if not build them and save them into the DB
         The AudioFeatures, for the song will be requested to the API
         """
-        artist_ids = [artist_dict['id'] for artist_dict in json_response['artists']]
-        artists = self.get_artists(artist_ids, json_response['artists'])
-        if(album == None):
-            album = self.get_album(json_response['album']['id'], json_response['album'])
-        audio_features = self.get_audio_features(json_response['id'])
-        
-        song = Song.create(json_response['id'], json_response['name'], audio_features, album)
-        song.save()
-        [song.artists.add(artist) for artist in artists]
 
-        return song
+        # get each artist's json slice for each track in the response
+        artists_payload = [a_payload for track in json_response for a_payload in track['artists']]
+        artists_ids = [artist['id'] for artist in artists_payload]
+
+        artists = self.get_artists(artists_ids, artists_payload)
+
+
+        albums_payload = [track['album'] for track in json_response]
+        album_ids = [album['id'] for album in albums_payload]
+        albums = self.get_albums(set(album_ids), albums_payload)
+        audio_features = self.get_audio_features((track['id'] for track in json_response))
+
+        songs = []
+
+        for track_dict, audio_feature in zip(json_response, audio_features):
+            track_artists_ids = [artist['id'] for artist in track_dict['artists']]
+            track_artists = [artist for artist in artists if artist.spotify_id in track_artists_ids]
+
+            #print("Id", track_dict['album']['id'])
+            #[print(album.spotify_id) for album in albums]
+            track_album = next(album for album in albums if album.spotify_id == track_dict['album']['id'])
+
+            print("album : ", track_album.name)
+            [print(track_artist.name) for track_artist in track_artists]
+            # find the related album
+            # get the related artists
+
+        
+        """songs = Song.objects.bulk_create(
+           (Song(spotify_id=track_dict['id'], name=track_dict['name']) for track_dict in json_response)
+        )"""
+        
+        """for track_dict in json_response:
+            song = Song.create(json_response['id'], json_response['name'], audio_features, album)
+            song.save()
+            print("Saving song")
+            [song.artists.add(artist) for artist in artists if [id in json_response['artists'] for id in json_response['artists']['id']]"""
+
+        return songs
     
-    def album_factory(self, album_dict):
+    def albums_factory(self, album_ids, albums_payload):
         """
         This method build an album and saves it into the DB given a JSON Spotify API response
         """
-        album = Album.create(album_dict['id'], album_dict['name'])
-        album.save()
-        return album
+        album_dicts = (next(album_dict for album_dict in albums_payload if album_dict['id'] == id) for id in album_ids)
+        albums = Album.objects.bulk_create(
+           (Album(spotify_id=album_dict['id'], name=album_dict['name']) for album_dict in album_dicts)
+        )
+        return albums
 
-    def artists_factory(self, artist_id, artists_dict=None):
+    def artists_factory(self, artist_ids, artists_payload):
         """
         This method fetches artists from the DB or the API
         The parameter artists_dict is a dictionary loaded from the JSON returned by the API
         If they are not in the DB, they will saved into it
         It does not need to request further informations to the API 
         """
-        artist = None
-        artist = Artist.create(artists_dict['id'], artists_dict['name'])
-        artist.save()
-        return artist
+        # parcourir les ids
+        # trouver l'artist_dict dans le payload
+        # parcourir les artist_dicts trouvés
+
+        artist_dicts = (next(artist_dict for artist_dict in artists_payload if artist_dict['id'] == id) for id in artist_ids)
+        artists = Artist.objects.bulk_create(
+           (Artist(spotify_id=artist_dict['id'], name=artist_dict['name']) for artist_dict in artist_dicts)
+        )
+        return artists
 
     def audio_features_factory(self, api_response):
         """
         This method builds an AudioFeature object from the dictionary given as parameter
         The dictionary is built from the JSON returned by the API
         """
-        audio_features = AudioFeatures.create(api_response)
-        audio_features.save()
+        audio_features = AudioFeatures.manager.bulk_create(
+            (AudioFeatures.create(a_features) for a_features in api_response['audio_features']  )
+        )
         return audio_features
   
 
