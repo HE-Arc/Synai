@@ -209,7 +209,8 @@ class SpotifyRequestManager:
         audio_features = analysis.summarised_audio_features
         query_dict = {}
         #cant use generator unfortunately for memory it would be better
-        track_seeds = random.sample([song.spotify_id for song in songs], settings.MAX_SEED_OBJECTS)
+        sample_size = settings.MAX_SEED_OBJECTS if len(songs) >= settings.MAX_SEED_OBJECTS else len(songs)
+        track_seeds = random.sample([song.spotify_id for song in songs], sample_size)
 
         query_dict['seed_tracks'] = ','.join(track_seeds)
         for attr in audio_features.features_headers()[:-1]:

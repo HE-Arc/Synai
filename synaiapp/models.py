@@ -150,6 +150,8 @@ class Song(models.Model):
         songs_name = []
         artists_names = []
         album_names = []
+
+
         for song in songs:
             # song.prefetch_related('artists').select_related('album')
             songs_name.append(song.name)

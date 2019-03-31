@@ -3,19 +3,23 @@
 <div class="card-columns" id="cards_playlist">
     {% for playlist in user_playlists %}
     <div class="card" onclick="analysePlaylist('{{playlist.id}}')">
+        <a href="#analyse_results" class="custom-card">
         <img src="{{ playlist.image_url }}" class="card-img-top" alt="playlist image of {{ playlist.name }}">
         <div class="card-body">
             <h5 class="card-title">{{ playlist.name }}</h5>
             <p class="card-text">This playlist is owned by {{ playlist.owner }}.</p>
             <p class="card-text"><small class="text-muted">contains {{ playlist.nb_tracks }} songs.</small></p>
         </div>
+        </a>
     </div>
+    
     {% endfor %}
 </div>
 
 {% block js_playlist %}
 <script type="text/javascript">
 function analysePlaylist(playlist_id) {
+    $("#analyse_results").html('<div class="spinner-border" style="width: 3rem; height: 3rem;" role="status"><span class="sr-only">Loading...</span></div>');
     $.ajax({
         url: "{% url 'analyse' %}",
         type: 'GET',

@@ -13,6 +13,12 @@ a {
   color: #230800 !important;
 }
 
+/*https://stackoverflow.com/questions/49554070/using-bootstrap-cards-as-a-hyperlink */
+a.custom-card,
+a.custom-card:hover {
+  color: inherit;
+}
+
 .row {
   margin: 10px;
 }
