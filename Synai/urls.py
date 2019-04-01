@@ -23,8 +23,6 @@ from synaiapp import views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.home, name='home'),
-    path('songs/<id>', views.SingleSongView.as_view(), name="song-detail"),
-    path('songs', views.SongsListView.as_view(), name="songs"),
     path('feed', views.FeedView.as_view(), name='feed'),
     path('history', views.HistoryView.as_view(), name='history'),
     path('dashboard', views.DashboardView.as_view(), name='dashboard'),
