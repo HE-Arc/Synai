@@ -13,7 +13,7 @@ class SpotifyRequestManager:
     """
 
     """
-    This is a helper dictionary that builds the API path of different resources 
+    This is a helper dictionary that builds the API path of the different resources 
     """
     def __init__(self, social):
         self.social = social
@@ -41,7 +41,6 @@ class SpotifyRequestManager:
             "tracks" : lambda r_data : self.get_songs([json['id'] for json in r_data['items']]),
             "albums" : lambda r_data : [self.get_album(json['id']) for json in r_data['items']],
             "artists" : lambda r_data : self.get_artists([json['id'] for json in r_data['items']], r_data['items']),
-            #"playlists" : get_playlist,
         }
 
     def refresh_access_token(self):
@@ -193,6 +192,9 @@ class SpotifyRequestManager:
 
     @classmethod
     def get_playlist_json_as_dict(cls, json_playlist):
+        """
+        This is a helper method to get a playlist's data more easily
+        """
         return {
             "id" : json_playlist['id'],
             "image_url" : json_playlist['images'][0]['url'],
@@ -223,9 +225,15 @@ class SpotifyRequestManager:
         query_dict = {}
         #cant use generator unfortunately for memory it would be better
         sample_size = settings.MAX_SEED_OBJECTS if len(songs) >= settings.MAX_SEED_OBJECTS else len(songs)
+
+        # we get 5 (max of the API) to use as "seeds" to generate user recommendations
         track_seeds = random.sample([song.spotify_id for song in songs], sample_size)
 
         query_dict['seed_tracks'] = ','.join(track_seeds)
+
+        # then for each feature we analyse, we use it to create bounds for the recommendations to be more "precise"
+        # currently the recommendations seem pretty dumb but Spotify probably has some black magic wizardry and uses the user's history to make them better
+        # and it's quite surprisingly working well
         for attr in audio_features.features_headers()[:-1]:
             attr_lower = attr.lower()
             val = getattr(audio_features, attr_lower)
