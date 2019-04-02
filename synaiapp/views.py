@@ -148,11 +148,13 @@ class AnalyseResultsView(generic.TemplateView):
         }
 
         datasource_id = self.request.GET.get('id')
+        datasource_name = self.request.GET.get('name')
         datasource_type = self.request.GET.get('type')
 
         # Request the songs depending the datasource
         if datasource_type == "history":
             songs = self.request_type['history']
+            datasource_name = 'Recently played'
         else :
             # Verify ID integrity (15-30 char in base 62)
             match = re.match('[a-zA-Z0-9]{15,30}',datasource_id)
@@ -170,6 +172,7 @@ class AnalyseResultsView(generic.TemplateView):
         context["audio_features"] = audio_features
         context["stats"] = analysis.summarised_audio_features.as_array()
         context["stats_headers"] = AudioFeatures.features_headers()
+        context["name"] = datasource_name
 
         # TODO Get correct recommandations
         context["recommandations"] = manager.get_recommendations(analysis)

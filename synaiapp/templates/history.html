@@ -25,7 +25,7 @@
 {% endblock %}
 {% block js_history %}
     <script src="{% static '/js/graph.js' %}"></script>
-    <script type="text/javascript">
+    <script type="text/javascript" async>
 
     let charts = [];
     {% for analy_id, dataset in analysis_dataset.items %}

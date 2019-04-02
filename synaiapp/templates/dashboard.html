@@ -10,7 +10,7 @@
             <p>Hello {{ username }}</p>
         </div>
         <div class="row justify-content-center">
-            <p>Here's the summary of all the analysis you permformed.</p>
+            <p>Here's the summary of all the analysis you performed.</p>
         </div>
         {% if summarised_dataset == None %}
         <div class="row justify-content-center">
@@ -21,7 +21,7 @@
             <div id="graph" class="col-lg-12" style="height: 350px;"></div>
         </div>
         <div class="row justify-content-center">
-            <p>Go to <a href="{% url 'feed' %}" class="custom_underline">Feed</a> to analyse more of your favorties songs or to <a href="{% url 'history' %}" class="custom_underline">History</a> to explore your previous habits !</p>
+            <p>Go to <a href="{% url 'feed' %}" class="custom_underline">Feed</a> to analyse more of your favorite songs or to <a href="{% url 'history' %}" class="custom_underline">History</a> to explore your previous habits !</p>
         </div>
         {% endif %}
     </div>
