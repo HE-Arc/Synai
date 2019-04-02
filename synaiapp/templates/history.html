@@ -23,3 +23,20 @@
         {% include  '_items/analysis_history_entries.html' %}
     </div>
 {% endblock %}
+{% block js_history %}
+    <script src="{% static '/js/graph.js' %}"></script>
+    <script type="text/javascript">
+
+    let charts = [];
+    {% for analy_id, dataset in analysis_dataset.items %}
+    charts.push(new LinesChart('graph{{ analy_id }}', {{ dataset |safe }}, 'LinesChart'));
+    {% endfor %}
+
+    window.onresize = function()
+    {
+        charts.forEach(function (element) {
+            element.chart.resize();
+        });
+    };
+    </script>
+{% endblock %}
