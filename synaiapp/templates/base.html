@@ -22,14 +22,21 @@
 {% block body %}
 {% endblock %}
 
-<div class="container-fluid">
+<main class="container-fluid">
     <div class="row justify-content-center text-justify">
         <div class="col-lg-8 col-md-10">
             {% block content %}
             {% endblock %}
         </div>
     </div>
-</div>
+</main>
+<footer class="footer font-small">
+    <div class="footer-copyright text-center py-3">
+        Developped @ HE-Arc, Neuchâtel
+        <br/>
+        <a href="https://github.com/HE-Arc/Synai/" class="custom_underline">GitHub Project</a>
+    </div>
+</footer>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/4.2.1/echarts-en.min.js" integrity="sha256-Qu+wC1hje1LvS/M9Tiv3ufjVvJoTlvRNFQvi8QmC124=" crossorigin="anonymous"></script>
 
 {% block js_graph %}
