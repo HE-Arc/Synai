@@ -91,3 +91,51 @@ function analyseHistory() {
         }
     });
 }
+
+function analyseArtist(artist_id) {
+    $("#analyse_results").html('<div class="d-flex justify-content-center"><div class="spinner-border" style="width: 3rem; height: 3rem;" role="status"><span class="sr-only">Loading...</span></div></div>');
+    $.ajax({
+        url: "/analyse",
+        type: 'GET',
+        data: {
+            'id': artist_id,
+            'type' : 'artist',
+        },
+        dataType: 'html',
+        success: function(data) {
+            $("#analyse_results").html(data);
+        }
+    });
+}
+
+function analyseSong(song_id) {
+    $("#analyse_results").html('<div class="d-flex justify-content-center"><div class="spinner-border" style="width: 3rem; height: 3rem;" role="status"><span class="sr-only">Loading...</span></div></div>');
+    $.ajax({
+        url: "/analyse",
+        type: 'GET',
+        data: {
+            'id': song_id,
+            'type' : 'song',
+        },
+        dataType: 'html',
+        success: function(data) {
+            $("#analyse_results").html(data);
+        }
+    });
+}
+
+function analyseAlbum(album_id) {
+    $("#analyse_results").html('<div class="d-flex justify-content-center"><div class="spinner-border" style="width: 3rem; height: 3rem;" role="status"><span class="sr-only">Loading...</span></div></div>');
+    $.ajax({
+        url: "/analyse",
+        type: 'GET',
+        data: {
+            'id': album_id,
+            'type' : 'album',
+        },
+        dataType: 'html',
+        success: function(data) {
+            $("#analyse_results").html(data);
+        }
+    });
+}

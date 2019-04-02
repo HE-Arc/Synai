@@ -120,7 +120,8 @@ class AnalyseResultsView(generic.TemplateView):
             'song': lambda song_id: manager.get_songs([song_id]),
             'playlist': lambda playlist_id: manager.get_playlist(playlist_id),
             'artist': lambda artist_id: manager.get_artist_top_songs(artist_id),
-            'history' : manager.get_current_user_history()
+            'history': manager.get_current_user_history(),
+            'album': lambda album_id: manager.get_album_tracks(album_id)
         }
 
         datasource_id = self.request.GET.get('id')
@@ -133,10 +134,11 @@ class AnalyseResultsView(generic.TemplateView):
             datasource_name = 'Recently played'
         else :
             # Verify ID integrity (15-30 char in base 62)
-            match = re.match('[a-zA-Z0-9]{15,30}',datasource_id)
+            match = re.match('[a-zA-Z0-9]{15,30}', datasource_id)
             if match is None:
                 raise ValidationError
-            try: 
+            
+            try:
                 songs = self.request_type[datasource_type](datasource_id)
             except KeyError:
                 raise ValidationError

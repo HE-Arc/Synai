@@ -1,22 +1,28 @@
-{% load bootstrap4 %}
-{% bootstrap_css %}
+{% load static %}
 
 <div class="container">
     {% if tracks %}
         <h5>Tracks</h5>
         {% for item in tracks %}
             <div class="row justify-content-center">
-                <div class="col-lg-6">
+                <div class="col">
                     <div class="card">
-                        <h4 class="card-header">{{ item.name }}</h4>
                         <div class="card-body">
-                            <p class="card-text">
-                                    {% for artist in item.artists.all %}
-                                        <h5>{{ artist.name }}</h5>
-                                    {% endfor %}
-                            </p>
-                            <p class="card-text">Album: {{ item.album.name }}</p>
-                            <a href="#" class="btn btn-primary">Details</a>
+                            <div class="row justify-content-start">
+                                <div class="col-md-3">
+                                    <img src="{{ item.album.image|default_if_none:"https://picsum.photos/200"  }}" class="img-rounded img-fluid">
+                                </div>
+                                <div class="col-md-6">
+                                    <p class="card-text">
+                                            {{ item.name }}
+                                            {% for artist in item.artists.all %}
+                                                <h5>{{ artist.name }}</h5>
+                                            {% endfor %}
+                                    </p>
+                                    <p class="card-text">Album: {{ item.album.name }}</p>
+                                    <a class="btn btn-primary" onclick="analyseSong('{{ item.spotify_id }}')">Analyze</a>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -27,10 +33,20 @@
         <h5>Artists</h5>
         {% for item in artists %}
             <div class="row justify-content-center">
-                <div class="col-lg-6">
+                <div class="col">
                     <div class="card">
-                        <h4 class="card-header">{{ item.name }}</h4>
                         <div class="card-body">
+                            <div class="row justify-content-start">
+                                <div class="col-md-3">
+                                    <img src="{{ item.image|default_if_none:"https://picsum.photos/200"  }}" class="img-rounded img-fluid">
+                                </div>
+                                <div class="col-md-6">
+                                    <p class="card-text">
+                                            {{ item.name }}
+                                    </p>
+                                    <a class="btn btn-primary" onclick="analyseArtist('{{ item.spotify_id }}')">Analyze</a>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -41,10 +57,20 @@
         <h5>Albums</h5>
         {% for item in albums %}
             <div class="row justify-content-center">
-                <div class="col-lg-6">
+                <div class="col">
                     <div class="card">
-                        <h4 class="card-header">{{ item.name }}</h4>
                         <div class="card-body">
+                            <div class="row justify-content-start">
+                                <div class="col-md-3">
+                                    <img src="{{ item.image|default_if_none:"https://picsum.photos/200"  }}" class="img-rounded img-fluid">
+                                </div>
+                                <div class="col-md-6">
+                                    <p class="card-text">
+                                            {{ item.name }}
+                                    </p>
+                                    <a class="btn btn-primary" onclick="analyseAlbum('{{ item.spotify_id }}')">Analyze</a>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
