@@ -47,68 +47,11 @@
     </div>
 {% endblock %}
 
-{% block js_search %}
-<script type="text/javascript">
-    $("#search_button").click(function(){
-        let search_field_input = $("#search_field").val();
-        if (search_field_input){
-            $.ajax({
-                url: "{% url "search_results" %}",
-                type: 'GET',
-                data: {
-                    'search_input': search_field_input
-                },
-                dataType: 'html',
-                success: function(data) {
-                    $("#search-content").html(data);
-                }
-            });
-        }
-
-    });
-
-    $('#search_field').keypress(function (e) {
-        if (e.which === 13)
-        {
-            e.preventDefault();
-            $('#search_button').click();
-        }
-    });
-
-    $('#pills-playlist-tab').click(function(){
-        $('#pills-playlist').load("{% url "playlist_entries" %}");
-    });
-
-    // FOR HISTORY REQUEST //
-    function analyseHistory() {
-        $("#analyse_results").html('<div class="d-flex justify-content-center"><div class="spinner-border" style="width: 3rem; height: 3rem;" role="status"><span class="sr-only">Loading...</span></div></div>');
-        $.ajax({
-            url: "{% url 'analyse' %}",
-            type: 'GET',
-            data: {
-                'type' : 'history',
-            },
-            dataType: 'html',
-            success: function(data) {
-                $("#analyse_results").html(data);
-            }
-        });
-    }
-</script>
+{% block js_graph %}
+<script type="text/javascript" src="{% static '/js/graph.js' %}"></script>
 {% endblock %}
 
-{% block js_feedgraph %}
-
-    <script src="{% static '/js/graph.js' %}"></script>
-    <script type="text/javascript">
-    
-    let charts = [];
-    window.onresize = function()
-    {
-        charts.forEach(function (element) {
-            element.chart.resize();
-        });
-    };
-
-   </script>
+{% block js_template %}
+<script type="text/javascript" src="{% static 'js/feed.js' %}"></script>
 {% endblock %}
+
