@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+
+<div class="container-fluid">
+    <div>
+        <h2>What do you mean by audio features ?</h2>
+        <p>
+            Audio features are a set of values calculated by Spotify on a defined song.<br />
+            Let's take the danceability value as an example.<br />
+            Danceability describes how suitable a track is for dancing based on a combination of musical elements including tempo, rhythm stability, beat strength, and overall regularity. 
+            A value of 0.0 is least danceable and 1.0 is most danceable.
+        </p>
+        <p>
+            <a class="text-primary" href="https://developer.spotify.com/documentation/web-api/reference/tracks/get-audio-features/">More infos on the audio features</a>
+        </p>
+    </div>
+    <div>
+        <h2>How do the recommendations work ?</h2>
+        <p>
+            The Spotify API provides us a nice way to recommend songs. For a playlist for example, we are going to take 5 songs as a sample.
+            We also use the audio features we analysed to make the songs recommended more precise.
+            
+            We do not know exactly how the algorithm behind works as this is kept secret by Spotify.
+        </p>
+    </div>
+    <div>
+        <h2>The analysis is slow !</h2>
+        <p>
+            Yes we know about it. We optimized it quite a lot already but we did not have enough time before the project was due to make it smooth as heck.
+            It should get faster as the database is getting filled though.
+        </p>
+    </div>
+    <div>
+        <h3>About the authors</h3>
+        <p>
+            Biloni Kim<br />
+            Haldenwang Thibault<br />
+            Herbelin Ludovic<br />
+        </p>
+        <p>
+            INF3-DLM-ab
+        </p>
+    </div>
+</div>
+{% endblock %}

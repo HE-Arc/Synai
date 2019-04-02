@@ -17,6 +17,7 @@ from django.contrib import admin
 from django.urls import path, re_path, include
 from django.conf import settings
 from django.conf.urls.static import static
+from django.views.generic import TemplateView
 
 from synaiapp import views
 
@@ -26,6 +27,7 @@ urlpatterns = [
     path('feed', views.FeedView.as_view(), name='feed'),
     path('history', views.HistoryView.as_view(), name='history'),
     path('dashboard', views.DashboardView.as_view(), name='dashboard'),
+    path('about', TemplateView.as_view(template_name="about.html"), name="about"),
 
     # Partial views
     path('search_results', views.SearchResultsView.as_view(), name='search_results'),
