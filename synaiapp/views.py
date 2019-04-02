@@ -74,7 +74,6 @@ class HistoryView(generic.TemplateView):
         context["analysis"] = analysis
         context["analysis_len"] = len(analysis)
         context["songs"] = songs
-        context["all_songs_len"] = len(songs)
 
         # for graphs use
         context["analysis_dataset"] = dict(zip([analy.id for analy in analysis], [analy.history_dataset(analy.songs.all()) for analy in analysis]))
