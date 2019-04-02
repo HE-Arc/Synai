@@ -27,17 +27,12 @@
     </div>
 {% endblock %}
 
-{% if summarised_dataset %}
-{% block js_dashboardgraph %}
-    <script src="{% static '/js/graph.js' %}"></script>
-    <script type="text/javascript">
-
-    let chart = new LinesChart('graph', {{ summarised_dataset |safe }}, 'LinesChart');
-
-    window.onresize = function()
-    {
-        chart.chart.resize();
-    };
-   </script>
+{% block js_graph %}
+<script type="text/javascript" src="{% static '/js/graph.js' %}"></script>
 {% endblock %}
-{% endif %}
+
+{% block js_template %}
+<script type="text/javascript">
+charts.push(new LinesChart('graph', {{ summarised_dataset |safe }}, 'LinesChart'));
+</script>
+{% endblock %}

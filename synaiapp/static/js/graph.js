@@ -1,4 +1,18 @@
 /**
+ * Graph JS
+ * 
+ * This files uses the Echarts librairies and ease its use.
+ */
+
+var charts = [];
+window.onresize = function()
+{
+    charts.forEach(function (element) {
+        element.chart.resize();
+    });
+};
+
+/**
  * Lines chart
  */
 class LinesChart {
@@ -8,7 +22,7 @@ class LinesChart {
         this.data = data;
         this.text = text;
         this.subtext = subtext;
-        console.log(data);
+        //console.log(data);
         this.chart = echarts.init(document.getElementById(this.id));
         this.chart.setOption(this.options);
     }
