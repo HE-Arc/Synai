@@ -44,29 +44,6 @@ def error_500(request):
 def error_400(request):
     return render(request, "api_request_error_400.html", status=400)
 
-class SingleSongView(generic.TemplateView):
-    model = Song
-    template_name = "song_detail.html"
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        song_id = self.kwargs['id']
-        song = Song.get_song(song_id)
-        if(song == None):
-            print("Song does not exists in the DB... Going to the API")
-            manager = request_manager_factory(self.request)
-            song = manager.get_songs([song_id])[0]
-
-        context['song'] = song
-        context['artists'] = song.artists.all()
-        return context
-            
-
-class SongsListView(generic.ListView):
-    #model = Song
-    queryset = Song.objects.prefetch_related('artists').select_related('audio_features').select_related('album').all()
-    template_name="songs_list.html"
-
 class FeedView(generic.TemplateView):
     template_name = "feed.html"
 
