@@ -161,7 +161,12 @@ class SpotifyRequestManager:
         for id, artist_payload in zip(artist_ids, request_payload):
             artist = Artist.get_artist(id)
             if(artist == None):
-                artist = self.artists_factory(id, artist_payload)
+                if 'images' in artist_payload:
+                    artist = self.artists_factory(id, artist_payload)
+                else:
+                    self.get_artists(artist_ids)
+                    continue
+                    
             artists.append(artist)
         return artists
     
@@ -302,7 +307,7 @@ class SpotifyRequestManager:
         """
         This method build an album and saves it into the DB given a JSON Spotify API response
         """
-        album = Album.create(album_dict['id'], album_dict['name'])
+        album = Album.create(album_dict['id'], album_dict['name'], album_dict['images'][0]['url'])
         album.save()
         return album
 
@@ -314,7 +319,10 @@ class SpotifyRequestManager:
         It does not need to request further informations to the API 
         """
         artist = None
-        artist = Artist.create(artists_dict['id'], artists_dict['name'])
+        artist_image = None
+        if artists_dict['images']:
+            artist_image = artists_dict['images'][0]['url']
+        artist = Artist.create(artists_dict['id'], artists_dict['name'], artist_image )
         artist.save()
         return artist
 

@@ -99,6 +99,7 @@ class AudioFeatures(models.Model):
 class Artist(models.Model):
     spotify_id = models.CharField(max_length=100, unique=True)
     name = models.CharField(max_length=255)
+    image = models.URLField(null=True)
 
     @classmethod
     def get_artist(cls, artist_id):
@@ -106,13 +107,14 @@ class Artist(models.Model):
         return artist
     
     @classmethod
-    def create(cls, spotify_id, name):
-        artist = cls(spotify_id=spotify_id, name=name)
+    def create(cls, spotify_id, name, image):
+        artist = cls(spotify_id=spotify_id, name=name, image=image)
         return artist
 
 class Album(models.Model):
     spotify_id = models.CharField(max_length=100, unique=True)
     name = models.CharField(max_length=255)
+    image = models.URLField(null=True)
 
     @classmethod
     def get_album(cls, album_id):
@@ -120,8 +122,8 @@ class Album(models.Model):
         return album
 
     @classmethod
-    def create(cls, spotify_id, name):
-        album = cls(spotify_id=spotify_id, name=name)
+    def create(cls, spotify_id, name, image):
+        album = cls(spotify_id=spotify_id, name=name, image=image)
         return album
 
     def get_songs(self):
