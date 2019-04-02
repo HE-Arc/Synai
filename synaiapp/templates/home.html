@@ -7,13 +7,20 @@
             <h1>Synai</h1>
         </div>
         <div class="row justify-content-center">
-            <p>Analyse your music's audio features such as energy, danceability, etc.
+            <img src="{% static 'LogoV2.png' %}" alt="Synai logo" class="rounded" style="max-height: 300px;"/>
+        </div>
+        <div class="row justify-content-center">
+            <h3>Welcome on your music analyser !</h3>
+            <p>
+                Use your Spotify account to analyse your music tastes and get features such as energy, danceability, etc.
+                Keep a trace of your favorites tracks and your music consumption. Observe your preferences evolve.
+            </p>
         </div>        
         <div class="row justify-content-center">
             <a class="btn btn-success btn-lg"href="{% url "social:begin" "spotify" %}">Log in with Spotify</a>
         </div>
         <div class="row justify-content-center">
-            <p>No Spotify yet ? <a href="https://www.spotify.com/">Click here !</a></p>
+            <p>Don't have a Spotify account yet ? <a href="https://www.spotify.com/" class="custom_underline">Click here !</a></p>
         </div>
     </div>
 {% endblock %}
