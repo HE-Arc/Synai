@@ -76,9 +76,6 @@ class FeedView(generic.TemplateView):
         manager = request_manager_factory(request)
         user_id = self.request.user.social_auth.get(provider="spotify").uid
 
-        # Playlists
-        context['user_playlists'] = manager.get_user_playlists(user_id)
-
         # History
         songs_history = manager.get_current_user_history()
         context['user_history'] = Song.get_songs_with_artists_and_album_names(songs_history)
@@ -178,3 +175,18 @@ class AnalyseResultsView(generic.TemplateView):
         context["recommandations"] = manager.get_recommendations(analysis)
 
         return context
+    
+@method_decorator(login_required, name='dispatch')
+class PlaylistEntriesView(generic.TemplateView):
+    template_name = "_items/playlist_entries.html"
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        manager = request_manager_factory(self.request)
+        user_id = self.request.user.social_auth.get(provider="spotify").uid
+
+        # Playlists
+        context['user_playlists'] = manager.get_user_playlists(user_id)
+        
+        return context
+    

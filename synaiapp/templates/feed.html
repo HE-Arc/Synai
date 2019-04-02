@@ -34,15 +34,9 @@
                         </form>
                         <div class="row justify-content-center" id="search-content"></div>
                 </div>
-                    <div class="tab-pane fade" id="pills-playlist" role="tabpanel" aria-labelledby="pills-playlist-tab-tab">
-                        {% if user_playlists %}
-                            {% include  "_items/playlist_entries.html" %}
-                        {% else %}
-                            <p>Oh, it's seems you havn't any playlists ! Create one and to analyse it.</p>
-                            <p>{{user}}</p>
-                        {% endif%}                        
+                    <div class="tab-pane fade" id="pills-playlist" role="tabpanel" aria-labelledby="pills-playlist-tab">
                     </div>
-                    <div class="tab-pane fade" id="pills-history" role="tabpanel" aria-labelledby="pills-history-tab-tab">
+                    <div class="tab-pane fade" id="pills-history" role="tabpanel" aria-labelledby="pills-history-tab">
                         {% include "_items/user_songs_history.html" %}
                     </div>
                 </div>
@@ -81,6 +75,10 @@
         }
     });
 
+    $('#pills-playlist-tab').click(function(){
+        $('#pills-playlist').load("{% url "playlist_entries" %}");
+    });
+
     // FOR HISTORY REQUEST //
     function analyseHistory() {
         $("#analyse_results").html('<div class="d-flex justify-content-center"><div class="spinner-border" style="width: 3rem; height: 3rem;" role="status"><span class="sr-only">Loading...</span></div></div>');
@@ -100,7 +98,7 @@
 {% endblock %}
 
 {% block js_feedgraph %}
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/4.1.0/echarts-en.js" integrity="sha256-q4eNahhjrmTWF+LAesQ+rDagZhwcegBpS7qE0UAjJx4=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/4.2.1/echarts-en.min.js" integrity="sha256-Qu+wC1hje1LvS/M9Tiv3ufjVvJoTlvRNFQvi8QmC124=" crossorigin="anonymous"></script>
     <script src="{% static '/js/graph.js' %}"></script>
     <script type="text/javascript">
     

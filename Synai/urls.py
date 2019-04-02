@@ -30,6 +30,7 @@ urlpatterns = [
     # Partial views
     path('search_results', views.SearchResultsView.as_view(), name='search_results'),
     path('analyse', views.AnalyseResultsView.as_view(), name='analyse'),
+    path('playlist_entries', views.PlaylistEntriesView.as_view(), name='playlist_entries'),
 
     # social auth app
     path('social/', include('social_django.urls', namespace='social')),
