@@ -5,12 +5,12 @@
 {% for analys in analysis %}
 <div class="historyentry">
     <div class="historyentry-header">
-        <h5>On the {{ analys.created }}</h5>
+        <h5>On the {{ analys.created }} :</h5>
     </div>
     <div class="historyentry-body">
         <div class="media">
             <p class="media-body">
-                You analyse made a(n) {{analys.datasource_type}} analysis.
+                A(n) {{analys.datasource_type}} was analysed.
             </p>
             <img src="static/note_icon.png" alt="datasource thumbnail" id="history-img" class="rounded ml-3">
         </div>
