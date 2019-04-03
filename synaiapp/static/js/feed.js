@@ -92,13 +92,14 @@ function analyseHistory() {
     });
 }
 
-function analyseArtist(artist_id) {
+function analyseArtist(artist_id, src_name) {
     $("#analyse_results").html('<div class="d-flex justify-content-center"><div class="spinner-border" style="width: 3rem; height: 3rem;" role="status"><span class="sr-only">Loading...</span></div></div>');
     $.ajax({
         url: "/analyse",
         type: 'GET',
         data: {
             'id': artist_id,
+            'name': src_name,
             'type' : 'artist',
         },
         dataType: 'html',
@@ -108,13 +109,14 @@ function analyseArtist(artist_id) {
     });
 }
 
-function analyseSong(song_id) {
+function analyseSong(song_id, src_name) {
     $("#analyse_results").html('<div class="d-flex justify-content-center"><div class="spinner-border" style="width: 3rem; height: 3rem;" role="status"><span class="sr-only">Loading...</span></div></div>');
     $.ajax({
         url: "/analyse",
         type: 'GET',
         data: {
             'id': song_id,
+            'name': src_name,
             'type' : 'song',
         },
         dataType: 'html',
@@ -124,13 +126,14 @@ function analyseSong(song_id) {
     });
 }
 
-function analyseAlbum(album_id) {
+function analyseAlbum(album_id, src_name) {
     $("#analyse_results").html('<div class="d-flex justify-content-center"><div class="spinner-border" style="width: 3rem; height: 3rem;" role="status"><span class="sr-only">Loading...</span></div></div>');
     $.ajax({
         url: "/analyse",
         type: 'GET',
         data: {
             'id': album_id,
+            'name': src_name,
             'type' : 'album',
         },
         dataType: 'html',
