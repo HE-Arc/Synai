@@ -84,7 +84,9 @@ function analysePlaylist(playlist_id, playlist_name) {
         success: function(data) {
             $("#analyse_results").html(data);
         },
-        error: analysisFail(),
+        error: function (XMLHttpRequest, textStatus, errorThrown) {
+            analysisFail();
+        },
     });
 }
 
@@ -104,7 +106,9 @@ function analyseHistory() {
         success: function(data) {
             $("#analyse_results").html(data);
         },
-        error: analysisFail(),
+        error: function (XMLHttpRequest, textStatus, errorThrown) {
+            analysisFail();
+        },
     });
 }
 
@@ -127,7 +131,9 @@ function analyseArtist(artist_id, src_name) {
         success: function(data) {
             $("#analyse_results").html(data);
         },
-        error: analysisFail(),
+        error: function (XMLHttpRequest, textStatus, errorThrown) {
+            analysisFail();
+        },
     });
 }
 
@@ -150,7 +156,9 @@ function analyseSong(song_id, src_name) {
         success: function(data) {
             $("#analyse_results").html(data);
         },
-        error: analysisFail(),
+        error: function (XMLHttpRequest, textStatus, errorThrown) {
+            analysisFail();
+        },
     });
 }
 
@@ -173,6 +181,8 @@ function analyseAlbum(album_id, src_name) {
         success: function(data) {
             $("#analyse_results").html(data);
         },
-        error: analysisFail(),
+        error: function (XMLHttpRequest, textStatus, errorThrown) {
+            analysisFail();
+        },
     });
 }
