@@ -12,7 +12,7 @@ django-dotenv==1.4.2
 django-excel-response2==2.0.8
 django-seed==0.1.9
 django-six==1.0.4
-djangorestframework==3.9.2
+djangorestframework==3.11.2
 Faker==1.0.2
 idna==2.8
 isort==4.3.9
